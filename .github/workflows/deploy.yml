@@ -25,6 +25,26 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Validate FTP secrets
+        run: |
+          if [ -z "${{ secrets.FTP_SERVER }}" ]; then
+            echo "❌ Error: FTP_SERVER secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.FTP_USERNAME }}" ]; then
+            echo "❌ Error: FTP_USERNAME secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.FTP_PASSWORD }}" ]; then
+            echo "❌ Error: FTP_PASSWORD secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.FTP_PORT }}" ]; then
+            echo "❌ Error: FTP_PORT secret is not set"
+            exit 1
+          fi
+          echo "✅ All FTP secrets are configured"
+
       - name: Deploy to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
