@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Magic Red';
+  src: url('/Magic Red.otf') format('opentype'),
+       url('/Magic Red.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Coolvetica';
+  src: url('/Coolvetica.ttf') format('truetype'),
+       url('/coolvetica.ttf') format('truetype'),
+       url('/Coolvetica.otf') format('opentype'),
+       url('/coolvetica.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Shadows Into Light Two';
+  src: url('/ShadowsIntoLightTwo-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Daylight';
+  src: url('/Daylight.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  font-feature-settings: normal;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+  /* High-Contrast Soft Pastel Theme - Exact Colors */
+  --bg-primary: #e5f1fa;        /* Primary Background - Soft airy blue */
+  --bg-secondary: #faf1e5;     /* Secondary Background / Cards - Creamy peach */
+  --text-primary: #9d5a37;     /* Primary Text / Borders - Rich muted brown */
+  --accent-primary: #a4bbd3;    /* Main Accent - Vibrant soft blue (buttons, links) */
+  --accent-secondary: #fae5f1; /* Secondary Accent - Blush pale pink (highlights, notifications) */
+  
+  /* Supporting shades */
+  --warm-peach-orange: #d98f64; /* Warm peach-orange (shadows/gradients) */
+  --deep-cool-blue: #6a86a2;    /* Deeper blue-gray */
+  --warm-beige: #E8C9B0;
+  --soft-tan: #B8957A;
+  --light-gray-brown: #C9B8A8;
+  --cool-blue-gray: #6a86a2;
+  --neutral-taupe: #B8A890;
+  
+  /* Theme Colors */
+  --background: var(--bg-primary);
+  --text: var(--text-primary);
+  --text-muted: var(--deep-cool-blue);
+  --accent: var(--accent-primary);
+}
+
+body {
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  font-family: 'Shadows Into Light Two', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  font-size: 22px;
+  line-height: 1.7;
+  position: relative;
+}
+
+/* Watercolor Text Effect */
+.watercolor-text {
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--warm-peach-orange) 50%, var(--soft-tan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: blur(0.3px);
+  text-shadow: 0 2px 6px rgba(157, 90, 55, 0.4);
+  position: relative;
+}
+
+/* Frosted Glass Effect */
+.frosted-glass {
+  background: rgba(250, 241, 229, 0.75);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 2px solid rgba(217, 143, 100, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(157, 90, 55, 0.25);
+}
+
+/* Color Blobs */
+.color-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.25;
+  animation: float 20s infinite ease-in-out;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-daylight), sans-serif;
+  font-weight: 700;
+}
+
+/* Mobile scaling - reduce by 25% */
+@media (max-width: 768px) {
+  body {
+    font-size: calc(22px * 0.75);
+  }
+  
+  h1 {
+    font-size: calc(48px * 0.75);
+  }
+  
+  h2, h3 {
+    font-size: calc(32px * 0.75);
+  }
+}
+
+/* Hero section - 4:3 on mobile, full height on desktop */
+@media (min-width: 768px) {
+  .hero-section {
+    aspect-ratio: auto !important;
+    min-height: 100vh !important;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
