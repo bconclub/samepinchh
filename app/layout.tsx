@@ -25,8 +25,11 @@ const daylight = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'Samepinchh',
+  title: 'Samepinchh - Not Therapy, Just Real Conversations',
   description: 'Samepinchh. Same people. Same understanding.',
+  icons: {
+    icon: '/icon.png',
+  },
 };
 
 export default function RootLayout({

@@ -20,7 +20,7 @@ export default function Footer() {
                 className="h-10 md:h-12 w-auto"
             />
             <p className="text-[17px] md:text-[19px] font-medium" style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: 'var(--text-muted)' }}>
-                Same people. Same understanding.
+                Not Therapy, Just Real Conversations
             </p>
         </motion.footer>
     );
