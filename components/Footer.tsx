@@ -10,17 +10,17 @@ export default function Footer() {
             whileInView={{ opacity: 1 }}
             transition={{ duration: 1 }}
             viewport={{ once: true }}
-            className="w-full py-4 text-center flex flex-col items-center gap-3"
+            className="footer w-full py-4 text-center flex flex-col items-center gap-3"
         >
             <Image
-                src="/SAmepinchh logo.webp"
+                src="/Samepinchh logo.png"
                 alt="Samepinchh"
                 width={150}
                 height={50}
-                className="h-10 md:h-12 w-auto"
+                className="footer__logo h-10 md:h-12 w-auto"
             />
-            <p className="text-[17px] md:text-[19px] font-medium" style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: 'var(--text-muted)' }}>
-                Not Therapy, Just Real Conversations
+            <p className="footer__text text-[17px] md:text-[19px] font-medium" style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: 'var(--text-muted)' }}>
+                Survived something that changed everything?
             </p>
         </motion.footer>
     );

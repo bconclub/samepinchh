@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Caveat } from 'next/font/google';
 import localFont from 'next/font/local';
+import Script from 'next/script';
 import './globals.css';
 
 const inter = Inter({ 
@@ -17,9 +18,9 @@ const caveat = Caveat({
   display: 'swap',
 });
 
-const daylight = localFont({
-  src: '../public/Daylight.ttf',
-  variable: '--font-daylight',
+const classyvogue = localFont({
+  src: '../public/Classyvogueregular.ttf',
+  variable: '--font-classyvogue',
   display: 'swap',
   fallback: ['sans-serif'],
 });
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
   title: 'Samepinchh - Not Therapy, Just Real Conversations',
   description: 'Samepinchh. Same people. Same understanding.',
   icons: {
-    icon: '/icon.png',
+    icon: '/Samepinch-Icon-V1.png',
   },
 };
 
@@ -39,7 +40,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${caveat.variable} ${daylight.variable} antialiased`} suppressHydrationWarning>
+      <body className={`${inter.variable} ${caveat.variable} ${classyvogue.variable} antialiased`} suppressHydrationWarning>
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-ZRFTNW5GC6"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-ZRFTNW5GC6');
+          `}
+        </Script>
         {children}
       </body>
     </html>

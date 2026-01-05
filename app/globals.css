@@ -28,40 +28,33 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'Daylight';
-  src: url('/Daylight.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-  font-feature-settings: normal;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 :root {
-  /* High-Contrast Soft Pastel Theme - Exact Colors */
-  --bg-primary: #e5f1fa;        /* Primary Background - Soft airy blue */
-  --bg-secondary: #faf1e5;     /* Secondary Background / Cards - Creamy peach */
-  --text-primary: #9d5a37;     /* Primary Text / Borders - Rich muted brown */
-  --accent-primary: #a4bbd3;    /* Main Accent - Vibrant soft blue (buttons, links) */
-  --accent-secondary: #fae5f1; /* Secondary Accent - Blush pale pink (highlights, notifications) */
+  /* Black and White Theme */
+  --bg-primary: #ffffff;        /* Primary Background - White */
+  --bg-secondary: #f5f5f5;     /* Secondary Background / Cards - Light gray */
+  --text-primary: #000000;     /* Primary Text - Black */
+  --accent-primary: #333333;    /* Main Accent - Dark gray (buttons, links) */
+  --accent-secondary: #666666; /* Secondary Accent - Medium gray (highlights, notifications) */
   
   /* Supporting shades */
-  --warm-peach-orange: #d98f64; /* Warm peach-orange (shadows/gradients) */
-  --deep-cool-blue: #6a86a2;    /* Deeper blue-gray */
-  --warm-beige: #E8C9B0;
-  --soft-tan: #B8957A;
-  --light-gray-brown: #C9B8A8;
-  --cool-blue-gray: #6a86a2;
-  --neutral-taupe: #B8A890;
+  --warm-peach-orange: #808080; /* Medium gray (shadows/gradients) */
+  --deep-cool-blue: #4a4a4a;    /* Dark gray */
+  --warm-beige: #e0e0e0;
+  --soft-tan: #b0b0b0;
+  --light-gray-brown: #d0d0d0;
+  --cool-blue-gray: #4a4a4a;
+  --neutral-taupe: #a0a0a0;
   
   /* Theme Colors */
   --background: var(--bg-primary);
   --text: var(--text-primary);
   --text-muted: var(--deep-cool-blue);
   --accent: var(--accent-primary);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
 }
 
 body {
@@ -82,17 +75,17 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   filter: blur(0.3px);
-  text-shadow: 0 2px 6px rgba(157, 90, 55, 0.4);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   position: relative;
 }
 
 /* Frosted Glass Effect */
 .frosted-glass {
-  background: rgba(250, 241, 229, 0.75);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
-  border: 2px solid rgba(217, 143, 100, 0.4);
-  box-shadow: 0 8px 32px 0 rgba(157, 90, 55, 0.25);
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
 }
 
 /* Color Blobs */
@@ -124,7 +117,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-daylight), sans-serif;
+  font-family: var(--font-classyvogue), sans-serif;
   font-weight: 700;
 }
 
@@ -145,14 +138,50 @@ h6 {
 
 /* Hero section - 4:3 on mobile, full height on desktop */
 @media (min-width: 768px) {
-  .hero-section {
+  .hero {
     aspect-ratio: auto !important;
     min-height: 100vh !important;
   }
 }
 
+/* Hero2 section - 50vh on mobile, 100vh on desktop */
+section.hero2 {
+  min-height: 50vh;
+}
+
+@media (min-width: 768px) {
+  section.hero2 {
+    min-height: 100vh;
+  }
+}
+
+/* Scroll Snap for Hero sections */
+section.hero,
+section.hero2 {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+/* Carousel touch optimizations */
+.info-carousel__card {
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.info-carousel {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Improve touch targets for mobile */
+@media (max-width: 768px) {
+  .info-carousel button {
+    min-width: 44px;
+    min-height: 44px;
   }
 }

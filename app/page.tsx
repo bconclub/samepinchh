@@ -1,8 +1,8 @@
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
-import HeroVideo from '@/components/HeroVideo';
-import WhyThisExists from '@/components/WhyThisExists';
-import Details from '@/components/Details';
+import FloatingVideo from '@/components/FloatingVideo';
+import Hero2 from '@/components/Hero2';
+import InfoCarousel from '@/components/InfoCarousel';
 import ContactForm from '@/components/ContactForm';
 import Footer from '@/components/Footer';
 import ColorBlobs from '@/components/ColorBlobs';
@@ -13,9 +13,9 @@ export default function Home() {
       <ColorBlobs />
       <Header />
       <Hero />
-      <HeroVideo />
-      <WhyThisExists />
-      <Details />
+      <FloatingVideo />
+      <Hero2 />
+      <InfoCarousel />
       <ContactForm />
       <Footer />
     </main>

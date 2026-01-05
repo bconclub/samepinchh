@@ -6,19 +6,19 @@ import Image from 'next/image';
 export default function Header() {
     return (
         <header 
-            className="fixed top-0 left-0 w-full border-b z-50" 
+            className="header fixed top-0 left-0 w-full border-b z-50" 
             style={{ 
-                borderBottomColor: 'rgba(217, 143, 100, 0.3)',
-                background: 'rgba(250, 241, 229, 0.6)',
+                borderBottomColor: 'rgba(0, 0, 0, 0.2)',
+                background: 'rgba(255, 255, 255, 0.8)',
                 backdropFilter: 'blur(20px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                boxShadow: '0 4px 16px 0 rgba(157, 90, 55, 0.1)'
+                boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.1)'
             }}
         >
-            <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div className="header__container max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                 <Link 
                     href="/" 
-                    className="hover:opacity-80 transition-opacity"
+                    className="header__logo-link hover:opacity-80 transition-opacity"
                     onClick={(e) => {
                         e.preventDefault();
                         window.scrollTo({
@@ -28,18 +28,18 @@ export default function Header() {
                     }}
                 >
                     <Image
-                        src="/SAmepinchh logo.webp"
+                        src="/Samepinchh logo.png"
                         alt="Samepinchh"
                         width={150}
                         height={50}
-                        className="h-10 md:h-12 w-auto"
+                        className="header__logo h-10 md:h-12 w-auto"
                         priority
                     />
                 </Link>
-                <nav className="flex items-center gap-8">
+                <nav className="header__nav flex items-center gap-8">
                     <Link 
                         href="#about" 
-                        className="transition-colors font-medium"
+                        className="header__nav-link transition-colors font-medium"
                         style={{ 
                             fontFamily: "'Shadows Into Light Two', sans-serif",
                             color: '#000000'
@@ -72,7 +72,7 @@ export default function Header() {
                     </Link>
                     <Link 
                         href="#contact" 
-                        className="transition-colors font-medium"
+                        className="header__nav-link transition-colors font-medium"
                         style={{ 
                             fontFamily: "'Shadows Into Light Two', sans-serif",
                             color: '#000000'
