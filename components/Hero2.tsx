@@ -11,7 +11,8 @@ export default function Hero2() {
                 scrollSnapAlign: 'start',
                 scrollSnapStop: 'always',
                 scrollMarginTop: '0px',
-                paddingTop: '200px'
+                paddingTop: '200px',
+                marginTop: '-10px'
             }}
         >
             {/* Content Container */}

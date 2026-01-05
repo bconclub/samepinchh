@@ -53,7 +53,7 @@ export default function FloatingVideo() {
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="floating-video-wrapper relative flex justify-center px-4 md:px-6"
-                style={{ y: videoY }}
+                style={{ y: videoY, marginTop: '10px' }}
             >
                 <div 
                     className="floating-video__player relative overflow-hidden cursor-pointer transition-all duration-500"

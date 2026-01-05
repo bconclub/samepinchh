@@ -14,6 +14,10 @@ export default function Hero() {
     // Parallax effect - background moves slower than scroll
     const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
     const backgroundScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+    
+    // Title animation - moves up and fades out while scrolling
+    const titleY = useTransform(scrollYProgress, [0, 1], ['0%', '-50%']);
+    const titleOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
     return (
         <section 
@@ -81,6 +85,10 @@ export default function Hero() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8 }}
                 className="hero__content relative z-10 text-center max-w-[56rem] translate-y-[20%] mx-6"
+                style={{
+                    y: titleY,
+                    opacity: titleOpacity
+                }}
             >
                 <h1 className="hero__title text-[42px] md:text-[86px] tracking-wide mb-3" style={{ fontFamily: 'var(--font-classyvogue), sans-serif', color: '#D9D9D9', fontWeight: 700, lineHeight: '1.2' }}>
                     {"Survived something that changed everything".split(' ').map((word, index) => (

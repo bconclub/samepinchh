@@ -25,6 +25,7 @@ export default function InfoCarousel() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [direction, setDirection] = useState(0);
     const [isInitialMount, setIsInitialMount] = useState(true);
+    const [isPaused, setIsPaused] = useState(false);
     const x = useMotionValue(0);
     const controls = useAnimation();
     
@@ -37,6 +38,28 @@ export default function InfoCarousel() {
     useEffect(() => {
         setIsInitialMount(false);
     }, []);
+
+    // Auto-play carousel - loops through all 3 cards
+    useEffect(() => {
+        if (isPaused) return;
+
+        const interval = setInterval(() => {
+            setDirection(1);
+            setCurrentIndex((prevIndex) => {
+                return prevIndex === cards.length - 1 ? 0 : prevIndex + 1;
+            });
+        }, 4000); // Change card every 4 seconds
+
+        return () => clearInterval(interval);
+    }, [isPaused]);
+
+    // Pause auto-play on user interaction, resume after 8 seconds
+    const pauseAutoPlay = () => {
+        setIsPaused(true);
+        setTimeout(() => {
+            setIsPaused(false);
+        }, 8000);
+    };
 
     const slideVariants = {
         enter: (direction: number) => ({
@@ -61,6 +84,7 @@ export default function InfoCarousel() {
     };
 
     const paginate = (newDirection: number) => {
+        pauseAutoPlay();
         setDirection(newDirection);
         setCurrentIndex((prevIndex) => {
             if (newDirection === 1) {
@@ -135,6 +159,7 @@ export default function InfoCarousel() {
                                     controls.start({ x: 0 });
                                 }
                             }}
+                            onDragStart={() => pauseAutoPlay()}
                             animate={controls}
                             className="cursor-grab active:cursor-grabbing flex items-center justify-center px-4"
                             whileDrag={{ cursor: 'grabbing' }}
@@ -161,6 +186,7 @@ export default function InfoCarousel() {
                                                 key={index}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
+                                                    pauseAutoPlay();
                                                     setDirection(index > currentIndex ? 1 : -1);
                                                     setCurrentIndex(index);
                                                 }}
