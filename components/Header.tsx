@@ -18,7 +18,7 @@ export default function Header() {
             <div className="header__container max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                 <Link 
                     href="/" 
-                    className="header__logo-link hover:opacity-80 transition-opacity"
+                    className="header__logo-link hover:opacity-80 transition-opacity cursor-pointer"
                     onClick={(e) => {
                         e.preventDefault();
                         window.scrollTo({
@@ -32,7 +32,7 @@ export default function Header() {
                         alt="Samepinchh"
                         width={150}
                         height={50}
-                        className="header__logo h-10 md:h-12 w-auto"
+                        className="header__logo h-10 md:h-12 w-auto cursor-pointer"
                         priority
                     />
                 </Link>
