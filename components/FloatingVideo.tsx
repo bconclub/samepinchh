@@ -1,22 +1,55 @@
 'use client';
 
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 export default function FloatingVideo() {
     const vimeoVideoId = '1149850498';
     const [isPlaying, setIsPlaying] = useState(false);
+    const [maxWidth, setMaxWidth] = useState('min(63vw, 420px)');
+    const [isDesktop, setIsDesktop] = useState(false);
     const iframeRef = useRef<HTMLIFrameElement | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const wrapperRef = useRef<HTMLDivElement>(null);
     
-    // Parallax scroll effect - video moves up as user scrolls through Hero section
+    // Track scroll progress - video moves up until it reaches center, then sticks
     const { scrollYProgress } = useScroll({
         target: containerRef,
-        offset: ["start end", "end start"]
+        offset: ["start end", "center center"]
     });
     
-    // Video moves up as you scroll through the first section
-    const videoY = useTransform(scrollYProgress, [0, 0.5, 1], ['0%', '-30%', '-60%']);
+    // On desktop: video moves up from initial position until it reaches center
+    // The transform combines: moving up (based on scroll) + centering (-50%)
+    // Initial margin-top: calc(10px + 28vh), target center: 50vh
+    // Move up by: calc((10px + 28vh - 50vh) * progress) = calc((10px - 22vh) * progress)
+    const videoTransform = useTransform(scrollYProgress, (progress: number) => {
+        if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+            // Desktop: combine scroll movement with centering
+            // Use calc to properly combine the values
+            return `translateY(calc(${progress} * (10px - 22vh) - 50%))`;
+        }
+        // Mobile: just center
+        return 'translateY(-50%)';
+    });
+
+    // Set responsive maxWidth and desktop flag
+    useEffect(() => {
+        const updateResponsive = () => {
+            const isDesktopSize = window.innerWidth >= 768;
+            setIsDesktop(isDesktopSize);
+            if (isDesktopSize) {
+                // Desktop: original size
+                setMaxWidth('min(90vw, 600px)');
+            } else {
+                // Mobile: 30% smaller
+                setMaxWidth('min(63vw, 420px)');
+            }
+        };
+
+        updateResponsive();
+        window.addEventListener('resize', updateResponsive);
+        return () => window.removeEventListener('resize', updateResponsive);
+    }, []);
 
     const handlePlayClick = () => {
         if (iframeRef.current) {
@@ -40,52 +73,35 @@ export default function FloatingVideo() {
     return (
         <div 
             ref={containerRef}
-            className="floating-video-container relative w-full z-20" 
-            style={{ 
-                marginTop: '-120px', 
-                marginBottom: '-120px',
-                position: 'relative'
-            }}
+            className="floating-video-container relative w-full z-20"
         >
             <motion.div
+                ref={wrapperRef}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="floating-video-wrapper relative flex justify-center px-4 md:px-6"
-                style={{ y: videoY, marginTop: '10px' }}
+                className="floating-video-wrapper sticky-video flex justify-center"
+                style={{ 
+                    transform: videoTransform,
+                }}
             >
                 <div 
-                    className="floating-video__player relative overflow-hidden cursor-pointer transition-all duration-500"
+                    className={`floating-video__player floating-video-player relative overflow-hidden cursor-pointer ${
+                        isPlaying ? 'floating-video-player-playing' : ''
+                    }`}
                     style={{ 
-                        aspectRatio: '4/3', 
-                        borderRadius: '16px',
-                        width: '100%',
-                        maxWidth: 'min(90vw, 600px)',
-                        filter: isPlaying ? 'grayscale(0%)' : 'grayscale(100%)',
-                        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        backgroundColor: '#000'
+                        maxWidth: maxWidth
                     }}
                     onClick={handleVideoClick}
                 >
                     <iframe
                         ref={iframeRef}
                         src={`https://player.vimeo.com/video/${vimeoVideoId}?loop=0&controls=0&title=0&byline=0&portrait=0`}
-                        className="floating-video__iframe w-full h-full pointer-events-none"
+                        className="floating-video__iframe floating-video-iframe w-full h-full pointer-events-none"
                         frameBorder="0"
                         allow="autoplay; fullscreen; picture-in-picture"
                         allowFullScreen
-                        style={{ 
-                            position: 'absolute', 
-                            top: 0,
-                            left: '52%',
-                            width: '133.33%',
-                            height: '133.33%',
-                            transform: 'translate(-45%, 0) scale(1.4)',
-                            objectFit: 'cover',
-                            borderRadius: '16px'
-                        }}
                         onLoad={() => {
                             setIsPlaying(false);
                             if (iframeRef.current) {
@@ -119,17 +135,16 @@ export default function FloatingVideo() {
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="floating-video__play-overlay absolute inset-0 flex items-center justify-center cursor-pointer z-10 bg-black/20 rounded-[16px]"
+                            className="floating-video__play-overlay floating-video-play-overlay absolute inset-0 flex items-center justify-center cursor-pointer z-10"
                             onClick={handlePlayClick}
                         >
                             <motion.div
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="floating-video__play-button flex items-center justify-center bg-white/20 backdrop-blur-sm rounded-full p-4 md:p-6"
+                                className="floating-video__play-button floating-video-play-button flex items-center justify-center"
                             >
                                 <svg 
-                                    className="floating-video__play-icon w-12 h-12 md:w-16 md:h-16" 
-                                    style={{ color: 'white', stroke: 'white', fill: 'white', strokeWidth: '0' }}
+                                    className="floating-video__play-icon floating-video-play-icon" 
                                     viewBox="0 0 24 24"
                                 >
                                     <path d="M8 5v14l11-7z" fill="currentColor"/>
