@@ -223,11 +223,60 @@ if ($has_audio) {
         }
     }
     
-    // Sanitize filename: timestamp_sanitized_name.extension
+    // Sanitize filename: dateprefix_sanitized_name.extension
     $sanitized_name = preg_replace('/[^a-z0-9]/i', '_', $name);
     $sanitized_name = substr($sanitized_name, 0, 50); // Limit length
-    $timestamp = time();
-    $file_name = $timestamp . '_' . $sanitized_name . '.' . $extension;
+    
+    // Parse date from form and format as DDMMYYYY
+    $date_prefix = '';
+    if (!empty($date) && $date !== 'Not selected') {
+        // Try to parse the date string (format: "Saturday, Jan 24 at 7 PM")
+        // Remove "at 7 PM" part for easier parsing
+        $date_clean = preg_replace('/\s+at\s+\d+\s*PM/i', '', $date);
+        
+        // Try using strtotime first (handles most formats)
+        $timestamp = strtotime($date_clean);
+        if ($timestamp !== false) {
+            $date_prefix = date('dmY', $timestamp);
+        } else {
+            // Fallback: manual parsing
+            if (preg_match('/(\w+),\s*(\w+)\s+(\d+)/', $date_clean, $matches)) {
+                // Format: "Saturday, Jan 24"
+                $month_name = $matches[2];
+                $day = str_pad($matches[3], 2, '0', STR_PAD_LEFT);
+                
+                // Convert month name to number
+                $months = [
+                    'jan' => '01', 'january' => '01',
+                    'feb' => '02', 'february' => '02',
+                    'mar' => '03', 'march' => '03',
+                    'apr' => '04', 'april' => '04',
+                    'may' => '05',
+                    'jun' => '06', 'june' => '06',
+                    'jul' => '07', 'july' => '07',
+                    'aug' => '08', 'august' => '08',
+                    'sep' => '09', 'september' => '09',
+                    'oct' => '10', 'october' => '10',
+                    'nov' => '11', 'november' => '11',
+                    'dec' => '12', 'december' => '12'
+                ];
+                
+                $month = strtolower($month_name);
+                $month_num = isset($months[$month]) ? $months[$month] : date('m');
+                $year = date('Y'); // Use current year
+                
+                $date_prefix = $day . $month_num . $year;
+            } else {
+                // Fallback: use current date in DDMMYYYY format
+                $date_prefix = date('dmY');
+            }
+        }
+    } else {
+        // No date provided, use current date
+        $date_prefix = date('dmY');
+    }
+    
+    $file_name = $date_prefix . '_' . $sanitized_name . '.' . $extension;
     
     // Prevent path traversal
     $file_name = basename($file_name);
