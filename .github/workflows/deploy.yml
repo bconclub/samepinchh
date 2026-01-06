@@ -1,0 +1,80 @@
+name: Deploy to FTP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Validate FTP secrets
+        run: |
+          if [ -z "${{ secrets.FTP_HOST }}" ]; then
+            echo "❌ Error: FTP_HOST secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.FTP_USERNAME }}" ]; then
+            echo "❌ Error: FTP_USERNAME secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.FTP_PASSWORD }}" ]; then
+            echo "❌ Error: FTP_PASSWORD secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.FTP_PORT }}" ]; then
+            echo "❌ Error: FTP_PORT secret is not set"
+            exit 1
+          fi
+          echo "✅ All FTP secrets are configured"
+
+      - name: Deploy Next.js build to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
+          local-dir: ./out/
+          server-dir: /public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+
+      - name: Deploy API folder to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
+          local-dir: ./api/
+          server-dir: /public_html/api/
+          exclude: |
+            **/.git*
+            **/.git*/**
+
+      - name: Create uploads directory structure
+        run: |
+          echo "Creating uploads directory structure..."
+          # This will be handled by the PHP script, but we can create it via FTP if needed
+          echo "✅ Uploads directory will be created by PHP script on first upload"
+
