@@ -8,6 +8,7 @@ export default function FloatingVideo() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [maxWidth, setMaxWidth] = useState('min(63vw, 420px)');
     const [isDesktop, setIsDesktop] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
     const iframeRef = useRef<HTMLIFrameElement | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
@@ -23,7 +24,11 @@ export default function FloatingVideo() {
     // Initial margin-top: calc(10px + 28vh), target center: 50vh
     // Move up by: calc((10px + 28vh - 50vh) * progress) = calc((10px - 22vh) * progress)
     const videoTransform = useTransform(scrollYProgress, (progress: number) => {
-        if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+        // During SSR and initial render, use consistent value
+        if (!isMounted) {
+            return 'translateY(-50%)';
+        }
+        if (isDesktop) {
             // Desktop: combine scroll movement with centering
             // Use calc to properly combine the values
             return `translateY(calc(${progress} * (10px - 22vh) - 50%))`;
@@ -47,6 +52,7 @@ export default function FloatingVideo() {
         };
 
         updateResponsive();
+        setIsMounted(true);
         window.addEventListener('resize', updateResponsive);
         return () => window.removeEventListener('resize', updateResponsive);
     }, []);
@@ -85,6 +91,7 @@ export default function FloatingVideo() {
                 style={{ 
                     transform: videoTransform,
                 }}
+                suppressHydrationWarning
             >
                 <div 
                     className={`floating-video__player floating-video-player relative overflow-hidden cursor-pointer ${

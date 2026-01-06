@@ -1,0 +1,15 @@
+# Prevent direct access to audio recordings
+# Only allow access through the download script
+
+Order Deny,Allow
+Deny from all
+
+# Optional: Allow access from specific IPs (for admin access)
+# Allow from 123.456.789.0
+
+# Optional: Allow access through download script
+# This requires a download.php script that validates access
+# <FilesMatch "\.(webm|ogg|mp3|wav)$">
+#     SetHandler application/x-httpd-php
+# </FilesMatch>
+

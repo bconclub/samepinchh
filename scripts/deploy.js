@@ -48,10 +48,38 @@ async function deploy() {
     await client.cd(REMOTE_DIR);
     console.log('✅ Changed to remote directory\n');
 
-    // Upload all files recursively
-    console.log('📤 Uploading files...');
+    // Upload all files recursively from out directory
+    console.log('📤 Uploading Next.js build files...');
     await client.uploadFromDir(LOCAL_DIR);
-    console.log('✅ All files uploaded successfully!\n');
+    console.log('✅ Next.js files uploaded successfully!\n');
+
+    // Upload PHP files
+    console.log('📤 Uploading PHP files...');
+    const apiDir = path.join(__dirname, '..', 'api');
+    if (fs.existsSync(apiDir)) {
+      await client.cd(REMOTE_DIR);
+      await client.ensureDir('api');
+      const phpFiles = fs.readdirSync(apiDir).filter(f => f.endsWith('.php'));
+      for (const file of phpFiles) {
+        console.log(`  Uploading ${file}...`);
+        await client.uploadFrom(path.join(apiDir, file), `api/${file}`);
+      }
+      console.log('✅ PHP files uploaded successfully!\n');
+    }
+
+    // Create uploads directory structure
+    console.log('📁 Creating uploads directory structure...');
+    await client.cd(REMOTE_DIR);
+    await client.ensureDir('uploads/audio-recordings');
+    console.log('✅ Uploads directory created!\n');
+
+    // Upload .htaccess file for uploads directory
+    const htaccessPath = path.join(__dirname, '..', 'uploads', 'audio-recordings', '.htaccess');
+    if (fs.existsSync(htaccessPath)) {
+      console.log('📤 Uploading .htaccess file...');
+      await client.uploadFrom(htaccessPath, 'uploads/audio-recordings/.htaccess');
+      console.log('✅ .htaccess file uploaded!\n');
+    }
 
     console.log('🎉 Deployment completed successfully!');
   } catch (error) {

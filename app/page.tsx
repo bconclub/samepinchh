@@ -3,6 +3,7 @@ import Hero from '@/components/Hero';
 import FloatingVideo from '@/components/FloatingVideo';
 import Hero2 from '@/components/Hero2';
 import InfoCarousel from '@/components/InfoCarousel';
+import SocialProof from '@/components/SocialProof';
 import ContactForm from '@/components/ContactForm';
 import Footer from '@/components/Footer';
 import ColorBlobs from '@/components/ColorBlobs';
@@ -16,6 +17,7 @@ export default function Home() {
       <FloatingVideo />
       <Hero2 />
       <InfoCarousel />
+      <SocialProof />
       <ContactForm />
       <Footer />
     </main>

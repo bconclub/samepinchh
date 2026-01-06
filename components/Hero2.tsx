@@ -6,25 +6,19 @@ import Image from 'next/image';
 export default function Hero2() {
     return (
         <section 
-            className="hero2 relative w-full flex items-center justify-center py-16 md:py-24 px-6"
-            style={{ 
-                scrollSnapAlign: 'start',
-                scrollSnapStop: 'always',
-                scrollMarginTop: '0px',
-                paddingTop: '200px',
-                marginTop: '-10px'
-            }}
+            id="about"
+            className="brand-section relative w-full flex items-center justify-center px-6"
         >
             {/* Content Container */}
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
+                viewport={{ once: false, margin: "-100px" }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative z-10 text-center max-w-4xl mx-auto flex flex-col items-center"
+                className="relative z-10 text-center max-w-4xl mx-auto flex flex-col items-center w-full"
             >
                 {/* Icon Image */}
-                <div className="mb-6 md:mb-8">
+                <div className="brand-icon-wrapper">
                     <motion.div
                         animate={{
                             y: [0, -15, 0],
@@ -48,7 +42,7 @@ export default function Hero2() {
                             alt="Same Pinch Icon"
                             width={200}
                             height={200}
-                            className="w-auto h-auto max-w-[150px] md:max-w-[200px]"
+                            className="brand-icon w-auto h-auto"
                             priority
                         />
                     </motion.div>
@@ -57,47 +51,42 @@ export default function Hero2() {
                 {/* Text Content */}
                 <div className="text-center">
                     <motion.h2 
-                        className="text-[58px] md:text-[86px] tracking-wide mb-2" 
-                        style={{ 
-                            fontFamily: 'var(--font-classyvogue), sans-serif', 
-                            color: '#000000', 
-                            fontWeight: 700, 
-                            lineHeight: '1.2' 
-                        }}
+                        className="brand-title"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: "-100px" }}
+                        viewport={{ once: false, margin: "-100px" }}
                         transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
                     >
                         Samepinchh
                     </motion.h2>
-                    <h2 
-                        className="text-[48px] md:text-[72px] tracking-wide" 
-                        style={{ 
-                            fontFamily: 'var(--font-classyvogue), sans-serif', 
-                            color: '#000000', 
-                            fontWeight: 300, 
-                            lineHeight: '1.2' 
-                        }}
-                    >
+                    <h2 className="tagline">
                         {"Connect with folks who've been there".split(' ').map((word, index) => (
                             <motion.span
                                 key={index}
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, margin: "-100px" }}
+                                viewport={{ once: false, margin: "-100px" }}
                                 transition={{ 
                                     duration: 0.5, 
                                     delay: 0.4 + (index * 0.1), 
                                     ease: "easeOut" 
                                 }}
-                                className="inline-block"
+                                className="tagline-word"
                             >
                                 {word}
                                 {index < "Connect with folks who've been there".split(' ').length - 1 && '\u00A0'}
                             </motion.span>
                         ))}
                     </h2>
+                    <motion.p
+                        className="text-sm text-gray-500 mt-2"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: false, margin: "-100px" }}
+                        transition={{ duration: 0.5, delay: 0.8, ease: "easeOut" }}
+                    >
+                        (Anonymously)
+                    </motion.p>
                 </div>
             </motion.div>
         </section>

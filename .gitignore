@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# uploaded audio files (keep directory structure and .htaccess)
+uploads/audio-recordings/*
+!uploads/audio-recordings/.htaccess
+!uploads/audio-recordings/.gitkeep

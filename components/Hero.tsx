@@ -22,13 +22,7 @@ export default function Hero() {
     return (
         <section 
             ref={sectionRef}
-            className="hero relative w-full flex items-center justify-center overflow-hidden"
-            style={{ 
-                minHeight: '100vh',
-                scrollSnapAlign: 'start',
-                scrollSnapStop: 'always',
-                scrollMarginTop: '0px'
-            }}
+            className="hero hero-section relative w-full flex items-center justify-center overflow-hidden"
         >
             {/* Background Image - Mobile */}
             <div className="hero__background hero__background--mobile absolute inset-0 w-full h-full md:hidden">
@@ -46,9 +40,8 @@ export default function Hero() {
                         src="/HEro Mobile.webp"
                         alt="Hero"
                         fill
-                        className="hero__image object-cover"
+                        className="hero__image hero-background-image object-cover"
                         priority
-                        style={{ filter: 'brightness(0.6)' }}
                     />
                 </motion.div>
             </div>
@@ -69,28 +62,27 @@ export default function Hero() {
                         src="/Hero Desktop.webp"
                         alt="Hero"
                         fill
-                        className="hero__image object-cover"
+                        className="hero__image hero-background-image object-cover"
                         priority
-                        style={{ filter: 'brightness(0.6)' }}
                     />
                 </motion.div>
             </div>
             
             {/* Dark Overlay */}
-            <div className="hero__overlay absolute inset-0 bg-black/30 z-0" />
+            <div className="hero__overlay hero-overlay absolute inset-0 z-0" />
             
             {/* Text Overlay */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8 }}
-                className="hero__content relative z-10 text-center max-w-[56rem] translate-y-[20%] mx-6"
+                className="hero__content hero-content-wrapper relative z-10 text-center max-w-[56rem] mx-6"
                 style={{
                     y: titleY,
                     opacity: titleOpacity
                 }}
             >
-                <h1 className="hero__title text-[42px] md:text-[86px] tracking-wide mb-3" style={{ fontFamily: 'var(--font-classyvogue), sans-serif', color: '#D9D9D9', fontWeight: 700, lineHeight: '1.2' }}>
+                <h1 className="hero__title hero-title mb-3">
                     {"Survived something that changed everything".split(' ').map((word, index) => (
                         <motion.span
                             key={index}
@@ -117,7 +109,7 @@ export default function Hero() {
                 transition={{ duration: 0.8, delay: 1.5 }}
                 className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 cursor-pointer"
                 onClick={() => {
-                    const nextSection = document.querySelector('.hero2');
+                    const nextSection = document.querySelector('.brand-section');
                     if (nextSection) {
                         nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     } else {
@@ -148,7 +140,7 @@ export default function Hero() {
                         strokeWidth="2" 
                         strokeLinecap="round" 
                         strokeLinejoin="round"
-                        style={{ color: '#D9D9D9' }}
+                        className="hero-scroll-indicator"
                     >
                         <path d="M6 9l6 6 6-6"/>
                     </svg>

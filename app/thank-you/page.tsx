@@ -13,7 +13,10 @@ function ThankYouContent() {
     const [formData, setFormData] = useState({
         name: '',
         contact: '',
-        message: ''
+        message: '',
+        hasAudio: false,
+        audioFile: '',
+        audioDuration: ''
     });
 
     useEffect(() => {
@@ -21,9 +24,28 @@ function ThankYouContent() {
         const name = searchParams.get('name') || '';
         const contact = searchParams.get('contact') || '';
         const message = searchParams.get('message') || '';
+        const hasAudio = searchParams.get('hasAudio') === 'true';
+        const audioFile = searchParams.get('audioFile') || '';
+        const audioDuration = searchParams.get('audioDuration') || '';
         
-        setFormData({ name, contact, message });
+        setFormData({ name, contact, message, hasAudio, audioFile, audioDuration });
     }, [searchParams]);
+    
+    // Get audio file URL
+    const getAudioUrl = () => {
+        if (!formData.audioFile) return '';
+        const downloadUrl = process.env.NEXT_PUBLIC_DOWNLOAD_URL || '/api/download.php';
+        return `${downloadUrl}?file=${encodeURIComponent(formData.audioFile)}`;
+    };
+    
+    // Format duration for display
+    const formatDuration = (seconds: string) => {
+        if (!seconds) return '';
+        const secs = parseInt(seconds);
+        const mins = Math.floor(secs / 60);
+        const remainingSecs = secs % 60;
+        return `${mins}:${remainingSecs.toString().padStart(2, '0')}`;
+    };
 
     return (
         <main className="min-h-screen relative overflow-hidden">
@@ -102,7 +124,7 @@ function ThankYouContent() {
                                         </p>
                                     </div>
                                 )}
-                                {formData.message && (
+                                {formData.message && !formData.hasAudio && (
                                     <div>
                                         <p 
                                             className="text-[16px] font-bold mb-1"
@@ -116,6 +138,41 @@ function ThankYouContent() {
                                         >
                                             {formData.message}
                                         </p>
+                                    </div>
+                                )}
+                                {formData.hasAudio && formData.audioFile && (
+                                    <div>
+                                        <p 
+                                            className="text-[16px] font-bold mb-2"
+                                            style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: 'var(--text-muted)' }}
+                                        >
+                                            What brought you here:
+                                        </p>
+                                        <div className="bg-white/80 rounded-[12px] p-4 border-2 border-black/20">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <span 
+                                                    className="text-[14px] font-semibold"
+                                                    style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: '#000000' }}
+                                                >
+                                                    {formData.name ? `${formData.name}'s recording` : 'Audio recording'}
+                                                    {formData.audioDuration && ` (${formatDuration(formData.audioDuration)})`}
+                                                </span>
+                                            </div>
+                                            <audio 
+                                                controls 
+                                                className="w-full"
+                                                style={{ 
+                                                    borderRadius: '8px',
+                                                    outline: 'none'
+                                                }}
+                                            >
+                                                <source src={getAudioUrl()} type="audio/webm" />
+                                                <source src={getAudioUrl()} type="audio/ogg" />
+                                                <source src={getAudioUrl()} type="audio/mpeg" />
+                                                <source src={getAudioUrl()} type="audio/wav" />
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                        </div>
                                     </div>
                                 )}
                             </div>

@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 
 export default function WhyThisExists() {
     return (
-        <section className="why-this-exists relative py-12 md:py-[80px] px-6 max-w-4xl mx-auto z-10">
+        <section className="why-this-exists why-this-exists-section relative px-6 max-w-4xl mx-auto z-10">
             <motion.div
                 initial={{ opacity: 0, y: 20, rotate: -2 }}
                 whileInView={{ opacity: 1, y: 0, rotate: 2 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="why-this-exists__container relative frosted-glass p-8 md:p-12 shadow-lg"
+                className="why-this-exists__container why-this-exists-container relative frosted-glass shadow-lg"
                 style={{
                     fontFamily: "'Shadows Into Light Two', sans-serif",
                     transform: 'rotate(2deg)',
@@ -22,7 +22,7 @@ export default function WhyThisExists() {
                     border: 'none'
                 }}
             >
-                <div className="why-this-exists__content text-[28px] md:text-[36px] leading-[1.4]" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-classyvogue), sans-serif', fontWeight: 700 }}>
+                <div className="why-this-exists__content why-this-exists-content">
                     <p className="why-this-exists__paragraph">
                         Not therapy, just real talks for brain injury, cancer, depression beaters who lost their world but found strength
                     </p>
