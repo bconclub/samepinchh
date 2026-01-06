@@ -236,65 +236,9 @@ if ($has_audio) {
     $sanitized_name = preg_replace('/[^a-z0-9]/i', '_', $name);
     $sanitized_name = substr($sanitized_name, 0, 50); // Limit length
     
-    // Parse date from form and format as DDMMYYYY
-    $date_prefix = '';
-    if (!empty($date) && $date !== 'Not selected') {
-        // Date format from form: "Saturday, Jan 6, 7:00 PM" or "Saturday, Jan 6 at 7 PM"
-        // Remove time part for easier parsing
-        $date_clean = preg_replace('/\s*,\s*\d+:\d+\s*(AM|PM)/i', '', $date);
-        $date_clean = preg_replace('/\s+at\s+\d+:\d+\s*(AM|PM)/i', '', $date_clean);
-        $date_clean = preg_replace('/\s+at\s+\d+\s*(AM|PM)/i', '', $date_clean);
-        
-        // Manual parsing is more reliable than strtotime
-        // Format: "Saturday, Jan 6" or "Saturday, January 6"
-        if (preg_match('/(\w+),\s*(\w+)\s+(\d+)/', $date_clean, $matches)) {
-            $month_name = $matches[2];
-            $day = intval($matches[3]); // Get day as integer
-            $day = str_pad($day, 2, '0', STR_PAD_LEFT); // Pad with leading zero
-            
-            // Convert month name to number
-            $months = [
-                'jan' => '01', 'january' => '01',
-                'feb' => '02', 'february' => '02',
-                'mar' => '03', 'march' => '03',
-                'apr' => '04', 'april' => '04',
-                'may' => '05',
-                'jun' => '06', 'june' => '06',
-                'jul' => '07', 'july' => '07',
-                'aug' => '08', 'august' => '08',
-                'sep' => '09', 'september' => '09',
-                'oct' => '10', 'october' => '10',
-                'nov' => '11', 'november' => '11',
-                'dec' => '12', 'december' => '12'
-            ];
-            
-            $month = strtolower($month_name);
-            $month_num = isset($months[$month]) ? $months[$month] : date('m');
-            $year = date('Y'); // Always use current year (2025)
-            
-            $date_prefix = $day . $month_num . $year;
-        } else {
-            // Fallback: try strtotime with current year explicitly
-            $current_year = date('Y');
-            $timestamp = strtotime($date_clean . ' ' . $current_year);
-            if ($timestamp !== false) {
-                // Verify the parsed date is reasonable (within current year)
-                $parsed_year = date('Y', $timestamp);
-                if ($parsed_year == $current_year) {
-                    $date_prefix = date('dmY', $timestamp);
-                } else {
-                    // If strtotime gives wrong year, use current date
-                    $date_prefix = date('dmY');
-                }
-            } else {
-                // Final fallback: use current date in DDMMYYYY format
-                $date_prefix = date('dmY');
-            }
-        }
-    } else {
-        // No date provided, use current date
-        $date_prefix = date('dmY');
-    }
+    // Use current date/time for filename (when recording is uploaded)
+    // Format: DDMMYYYY (e.g., 06012025 for January 6, 2025)
+    $date_prefix = date('dmY');
     
     $file_name = $date_prefix . '_' . $sanitized_name . '.' . $extension;
     
