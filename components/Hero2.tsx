@@ -79,7 +79,7 @@ export default function Hero2() {
                         ))}
                     </h2>
                     <motion.p
-                        className="text-sm text-gray-500 mt-2"
+                        className="text-sm md:text-[1.05rem] text-gray-500 mt-2"
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: false, margin: "-100px" }}

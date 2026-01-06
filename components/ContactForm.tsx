@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Mic, MicOff, Lock, Heart, Shield } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
@@ -123,7 +122,6 @@ const getISTDateOnly = (date: Date): Date => {
 };
 
 export default function ContactForm() {
-    const router = useRouter();
     const [formData, setFormData] = useState({
         name: '',
         contact: '',
@@ -534,6 +532,18 @@ export default function ContactForm() {
                 throw new Error(errorMsg + debugInfo);
             }
             
+            // Log webhook status
+            console.log('=== WEBHOOK STATUS ===');
+            console.log('Webhook URL:', result.webhook_url || 'Not provided');
+            console.log('Webhook sent:', result.webhook_sent ? 'YES ✅' : 'NO ❌');
+            if (result.webhook_http_code) {
+                console.log('Webhook HTTP Code:', result.webhook_http_code);
+            }
+            if (result.webhook_error) {
+                console.error('Webhook error:', result.webhook_error);
+            }
+            console.log('Full response:', result);
+            
             // Redirect to thank you page with file information
             redirectToThankYou({
                 ...payload,
@@ -565,7 +575,8 @@ export default function ContactForm() {
             ...(payload.audioDuration && { audioDuration: payload.audioDuration.toString() }),
             ...(payload.audioFile && { audioFile: payload.audioFile })
         });
-        router.push(`/thank-you?${params.toString()}`);
+        // Use window.location for static exports to avoid HEAD request prefetching issues
+        window.location.href = `/thank-you?${params.toString()}`;
     };
 
     return (

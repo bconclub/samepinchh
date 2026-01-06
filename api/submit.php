@@ -357,40 +357,110 @@ foreach ($utm_keys as $key) {
 }
 
 // Log webhook data being sent (for debugging - remove sensitive data in production)
-error_log("Sending webhook data: " . json_encode($webhook_data));
+error_log("=== WEBHOOK ATTEMPT ===");
+error_log("Webhook URL: " . $webhook_url);
+error_log("Webhook data being sent: " . json_encode($webhook_data, JSON_PRETTY_PRINT));
+error_log("Data size: " . strlen(json_encode($webhook_data)) . " bytes");
 
 // Send to webhook using cURL (non-blocking - don't fail if webhook fails)
+$webhook_sent = false;
+$webhook_error = null;
+
 if (function_exists('curl_init')) {
+    $json_data = json_encode($webhook_data);
+    
     $ch = curl_init($webhook_url);
     curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($webhook_data));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
-        'Accept: application/json'
+        'Accept: application/json',
+        'User-Agent: Samepinchh-Website/1.0',
+        'Content-Length: ' . strlen($json_data)
     ]);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10); // 10 second timeout
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); // 5 second connection timeout
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15); // 15 second timeout
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // 10 second connection timeout
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+    
+    // SSL options - try with verification first, fallback if needed
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     
     // Execute and capture response
     $webhook_response = curl_exec($ch);
     $curl_error = curl_error($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curl_info = curl_getinfo($ch);
     curl_close($ch);
     
     // Log webhook result for debugging
     if ($curl_error) {
-        error_log("Webhook error: $curl_error | URL: $webhook_url | HTTP Code: $http_code");
+        $webhook_error = "cURL Error: $curl_error";
+        error_log("Webhook cURL error: $curl_error | URL: $webhook_url | HTTP Code: $http_code");
+        
+        // Try again with SSL verification disabled if SSL error
+        if (strpos($curl_error, 'SSL') !== false || strpos($curl_error, 'certificate') !== false) {
+            error_log("Retrying webhook with SSL verification disabled...");
+            $ch2 = curl_init($webhook_url);
+            curl_setopt($ch2, CURLOPT_POST, true);
+            curl_setopt($ch2, CURLOPT_POSTFIELDS, $json_data);
+            curl_setopt($ch2, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Accept: application/json',
+                'User-Agent: Samepinchh-Website/1.0',
+                'Content-Length: ' . strlen($json_data)
+            ]);
+            curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch2, CURLOPT_TIMEOUT, 15);
+            curl_setopt($ch2, CURLOPT_CONNECTTIMEOUT, 10);
+            curl_setopt($ch2, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, 0);
+            
+            $webhook_response2 = curl_exec($ch2);
+            $curl_error2 = curl_error($ch2);
+            $http_code2 = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
+            curl_close($ch2);
+            
+            if (!$curl_error2 && $http_code2 >= 200 && $http_code2 < 300) {
+                $webhook_sent = true;
+                error_log("Webhook sent successfully (retry without SSL): HTTP $http_code2 | URL: $webhook_url");
+            } else {
+                error_log("Webhook retry failed: $curl_error2 | HTTP Code: $http_code2");
+            }
+        }
     } else if ($http_code >= 200 && $http_code < 300) {
-        error_log("Webhook sent successfully: HTTP $http_code | URL: $webhook_url");
+        $webhook_sent = true;
+        error_log("Webhook sent successfully: HTTP $http_code | URL: $webhook_url | Response: " . substr($webhook_response, 0, 100));
     } else {
+        $webhook_error = "HTTP $http_code";
         error_log("Webhook failed: HTTP $http_code | URL: $webhook_url | Response: " . substr($webhook_response, 0, 200));
     }
+    
+    // Add webhook status to response for debugging
+    $response_data['webhook_sent'] = $webhook_sent;
+    $response_data['webhook_url'] = $webhook_url;
+    if ($webhook_error) {
+        $response_data['webhook_error'] = $webhook_error;
+    }
+    if (isset($http_code)) {
+        $response_data['webhook_http_code'] = $http_code;
+    }
+    error_log("=== WEBHOOK RESULT ===");
+    error_log("Webhook sent: " . ($webhook_sent ? 'YES' : 'NO'));
+    error_log("HTTP Code: " . (isset($http_code) ? $http_code : 'N/A'));
+    if ($webhook_error) {
+        error_log("Webhook error: " . $webhook_error);
+    }
 } else {
+    $webhook_error = "cURL not available";
+    error_log("=== WEBHOOK ERROR ===");
     error_log("cURL is not available - cannot send webhook to: $webhook_url");
+    $response_data['webhook_error'] = $webhook_error;
+    $response_data['webhook_sent'] = false;
+    $response_data['webhook_url'] = $webhook_url;
 }
 
 http_response_code(200);
