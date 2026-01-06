@@ -62,7 +62,11 @@ export default function VideoModal({ isOpen, onClose, vimeoVideoId }: VideoModal
                         className="fixed inset-0 z-50 flex items-center justify-center p-4"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="relative w-full max-w-5xl bg-black rounded-2xl overflow-hidden shadow-2xl">
+                        <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl" style={{ 
+                            maxHeight: '81vh',
+                            maxWidth: 'min(81vw, calc(81vh * 9 / 16))',
+                            width: 'min(81vw, calc(81vh * 9 / 16))'
+                        }}>
                             {/* Close Button */}
                             <button
                                 onClick={onClose}
@@ -84,8 +88,10 @@ export default function VideoModal({ isOpen, onClose, vimeoVideoId }: VideoModal
                                 </svg>
                             </button>
 
-                            {/* Video Container - 9:16 aspect ratio */}
-                            <div className="relative w-full" style={{ paddingBottom: '177.78%' }}>
+                            {/* Video Container - 9:16 aspect ratio, constrained to viewport */}
+                            <div className="relative w-full" style={{ 
+                                paddingBottom: '177.78%'
+                            }}>
                                 <iframe
                                     ref={iframeRef}
                                     src={`https://player.vimeo.com/video/${vimeoVideoId}?autoplay=1&loop=0&controls=0&title=0&byline=0&portrait=0`}

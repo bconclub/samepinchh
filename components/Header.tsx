@@ -36,53 +36,22 @@ export default function Header() {
                         priority
                     />
                 </Link>
-                <nav className="header__nav flex items-center gap-8">
-                    <Link 
-                        href="#about" 
-                        className="header__nav-link transition-colors font-medium"
-                        style={{ 
-                            fontFamily: "'Shadows Into Light Two', sans-serif",
-                            color: '#000000'
-                        }}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            const element = document.getElementById('about');
-                            if (element) {
-                                const headerHeight = 80; // Approximate header height
-                                const offset = headerHeight + 10; // 10px above the section
-                                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                                const offsetPosition = elementPosition - offset;
-                                
-                                window.scrollTo({
-                                    top: offsetPosition,
-                                    behavior: 'smooth'
-                                });
-                            }
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.color = '#000000';
-                            e.currentTarget.style.opacity = '0.7';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.color = '#000000';
-                            e.currentTarget.style.opacity = '1';
-                        }}
-                    >
-                        About
-                    </Link>
+                <nav className="header__nav flex items-center">
                     <Link 
                         href="#contact" 
-                        className="header__nav-link transition-colors font-medium"
+                        className="px-6 py-2 rounded-[12px] font-bold text-base transition-all"
                         style={{ 
                             fontFamily: "'Shadows Into Light Two', sans-serif",
-                            color: '#000000'
+                            background: '#000000',
+                            color: '#ffffff',
+                            boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.2)'
                         }}
                         onClick={(e) => {
                             e.preventDefault();
                             const element = document.getElementById('contact');
                             if (element) {
-                                const headerHeight = 80; // Approximate header height
-                                const offset = headerHeight + 10; // 10px above the section
+                                const headerHeight = 80;
+                                const offset = headerHeight + 10;
                                 const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
                                 const offsetPosition = elementPosition - offset;
                                 
@@ -93,15 +62,13 @@ export default function Header() {
                             }
                         }}
                         onMouseEnter={(e) => {
-                            e.currentTarget.style.color = '#000000';
-                            e.currentTarget.style.opacity = '0.7';
+                            e.currentTarget.style.background = '#333333';
                         }}
                         onMouseLeave={(e) => {
-                            e.currentTarget.style.color = '#000000';
-                            e.currentTarget.style.opacity = '1';
+                            e.currentTarget.style.background = '#000000';
                         }}
                     >
-                        Contact
+                        Join Now
                     </Link>
                 </nav>
             </div>
