@@ -495,21 +495,12 @@ section.brand-section {
 }
 
 .floating-video-play-button {
-  background-color: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(4px);
-  border-radius: 9999px;
-  padding: 16px;
-}
-
-@media (min-width: 768px) {
-  .floating-video-play-button {
-    padding: 24px;
-  }
+  background-color: transparent;
 }
 
 .floating-video-play-icon {
-  width: 48px;
-  height: 48px;
+  width: 24px;
+  height: 24px;
   color: white;
   stroke: white;
   fill: white;
@@ -518,8 +509,8 @@ section.brand-section {
 
 @media (min-width: 768px) {
   .floating-video-play-icon {
-    width: 64px;
-    height: 64px;
+    width: 32px;
+    height: 32px;
   }
 }
 

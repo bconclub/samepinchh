@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Mic, MicOff, Lock, Heart, Shield } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
@@ -122,6 +123,7 @@ const getISTDateOnly = (date: Date): Date => {
 };
 
 export default function ContactForm() {
+    const router = useRouter();
     const [formData, setFormData] = useState({
         name: '',
         contact: '',
@@ -405,18 +407,22 @@ export default function ContactForm() {
     };
 
     const getUTMParameters = () => {
-        if (typeof window === 'undefined') return {};
-        
-        const urlParams = new URLSearchParams(window.location.search);
+        const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
         const utmParams: any = {};
         
-        const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
-        utmKeys.forEach(key => {
-            const value = urlParams.get(key);
-            if (value) {
-                utmParams[key] = value;
-            }
-        });
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            utmKeys.forEach(key => {
+                const value = urlParams.get(key);
+                // Always include all UTM parameters, use empty string if not present
+                utmParams[key] = value || '';
+            });
+        } else {
+            // SSR: return empty strings for all UTM parameters
+            utmKeys.forEach(key => {
+                utmParams[key] = '';
+            });
+        }
         
         return utmParams;
     };
@@ -448,9 +454,9 @@ export default function ContactForm() {
         formDataToSend.append('contact', formData.contact);
         formDataToSend.append('date', dateStr);
         
-        // Add UTM parameters if present
+        // Always add all UTM parameters (even if empty)
         Object.keys(utmParams).forEach(key => {
-            formDataToSend.append(key, utmParams[key]);
+            formDataToSend.append(key, utmParams[key] || '');
         });
         
         // Handle audio or text message
@@ -585,8 +591,8 @@ export default function ContactForm() {
             ...(payload.audioDuration && { audioDuration: payload.audioDuration.toString() }),
             ...(payload.audioFile && { audioFile: payload.audioFile })
         });
-        // Use .html extension for static exports to avoid 403 errors
-        window.location.href = `/thank-you.html?${params.toString()}`;
+        // Use Next.js router for proper client-side navigation
+        router.push(`/thank-you?${params.toString()}`);
     };
 
     return (

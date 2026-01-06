@@ -142,7 +142,7 @@ export default function FloatingVideo() {
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="floating-video__play-overlay floating-video-play-overlay absolute inset-0 flex items-center justify-center cursor-pointer z-10"
+                            className="floating-video__play-overlay floating-video-play-overlay absolute inset-0 flex items-end justify-end cursor-pointer z-10 p-4"
                             onClick={handlePlayClick}
                         >
                             <motion.div

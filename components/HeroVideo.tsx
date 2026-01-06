@@ -116,7 +116,7 @@ export default function HeroVideo() {
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                className="hero-video__play-overlay absolute inset-0 flex items-center justify-center cursor-pointer z-10"
+                                className="hero-video__play-overlay absolute inset-0 flex items-end justify-end cursor-pointer z-10 p-4"
                                 onClick={handlePlayClick}
                             >
                                 <motion.div
@@ -125,7 +125,7 @@ export default function HeroVideo() {
                                     className="hero-video__play-button flex items-center justify-center"
                                 >
                                     <svg 
-                                        className="hero-video__play-icon w-12 h-12 md:w-20 md:h-20" 
+                                        className="hero-video__play-icon w-6 h-6 md:w-10 md:h-10" 
                                         style={{ color: 'white', stroke: 'white', fill: 'white', strokeWidth: '0' }}
                                         viewBox="0 0 24 24"
                                     >
