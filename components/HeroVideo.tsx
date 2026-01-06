@@ -2,11 +2,15 @@
 
 import { motion } from 'framer-motion';
 import { useState, useRef } from 'react';
+import VideoModal from './VideoModal';
 
 export default function HeroVideo() {
     // Vimeo video ID from URL: https://vimeo.com/1149850498
     const vimeoVideoId = '1149850498';
+    // My Story video ID from URL: https://vimeo.com/1151851746
+    const myStoryVideoId = '1151851746';
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
     const handlePlayClick = () => {
@@ -137,7 +141,41 @@ export default function HeroVideo() {
 
                     </div>
                 </div>
+
+                {/* My Story Button */}
+                <div className="mt-8 md:mt-10 text-center relative z-10 w-full">
+                    <motion.button
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5, duration: 0.6 }}
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setIsModalOpen(true)}
+                        className="px-8 py-3 rounded-[12px] font-bold text-lg transition-all relative z-10 inline-block"
+                        style={{
+                            background: '#000000',
+                            color: '#ffffff',
+                            fontFamily: "'Shadows Into Light Two', sans-serif",
+                            boxShadow: '6px 6px 12px rgba(0, 0, 0, 0.3)'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.background = '#333333';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.background = '#000000';
+                        }}
+                    >
+                        My Story
+                    </motion.button>
+                </div>
             </motion.div>
+
+            {/* Video Modal */}
+            <VideoModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                vimeoVideoId={myStoryVideoId}
+            />
         </section>
     );
 }

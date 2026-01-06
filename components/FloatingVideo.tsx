@@ -2,10 +2,14 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
+import VideoModal from './VideoModal';
 
 export default function FloatingVideo() {
     const vimeoVideoId = '1149850498';
+    // My Story video ID from URL: https://vimeo.com/1151851746
+    const myStoryVideoId = '1151851746';
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [maxWidth, setMaxWidth] = useState('min(63vw, 420px)');
     const [isDesktop, setIsDesktop] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
@@ -87,7 +91,7 @@ export default function FloatingVideo() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="floating-video-wrapper sticky-video flex justify-center"
+                className="floating-video-wrapper sticky-video flex flex-col items-center"
                 style={{ 
                     transform: videoTransform,
                 }}
@@ -160,7 +164,52 @@ export default function FloatingVideo() {
                         </motion.div>
                     )}
                 </div>
+
+                {/* My Story Button - Right below the video */}
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ delay: 0.5, duration: 0.6 }}
+                    className="text-center relative z-10"
+                    style={{ marginTop: '20px', width: maxWidth }}
+                >
+                    <motion.button
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setIsModalOpen(true)}
+                        className="px-8 py-3 rounded-[12px] font-bold text-lg transition-all relative z-10 inline-flex items-center gap-2"
+                        style={{
+                            background: '#000000',
+                            color: '#ffffff',
+                            fontFamily: "'Shadows Into Light Two', sans-serif",
+                            boxShadow: '6px 6px 12px rgba(0, 0, 0, 0.3)'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.background = '#333333';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.background = '#000000';
+                        }}
+                    >
+                        <svg 
+                            className="w-5 h-5" 
+                            style={{ color: 'white', fill: 'white' }}
+                            viewBox="0 0 24 24"
+                        >
+                            <path d="M8 5v14l11-7z" fill="currentColor"/>
+                        </svg>
+                        My Story
+                    </motion.button>
+                </motion.div>
             </motion.div>
+
+            {/* Video Modal */}
+            <VideoModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                vimeoVideoId={myStoryVideoId}
+            />
         </div>
     );
 }

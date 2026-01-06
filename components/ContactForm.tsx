@@ -412,8 +412,8 @@ export default function ContactForm() {
         
         if (typeof window !== 'undefined') {
             const urlParams = new URLSearchParams(window.location.search);
-            utmKeys.forEach(key => {
-                const value = urlParams.get(key);
+        utmKeys.forEach(key => {
+            const value = urlParams.get(key);
                 // Always include all UTM parameters, use empty string if not present
                 utmParams[key] = value || '';
             });
@@ -421,7 +421,7 @@ export default function ContactForm() {
             // SSR: return empty strings for all UTM parameters
             utmKeys.forEach(key => {
                 utmParams[key] = '';
-            });
+        });
         }
         
         return utmParams;
