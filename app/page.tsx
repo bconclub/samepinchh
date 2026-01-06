@@ -7,6 +7,7 @@ import SocialProof from '@/components/SocialProof';
 import ContactForm from '@/components/ContactForm';
 import Footer from '@/components/Footer';
 import ColorBlobs from '@/components/ColorBlobs';
+import WhatsAppFloat from '@/components/WhatsAppFloat';
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <SocialProof />
       <ContactForm />
       <Footer />
+      <WhatsAppFloat />
     </main>
   );
 }
