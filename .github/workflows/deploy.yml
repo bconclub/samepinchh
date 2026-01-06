@@ -78,3 +78,4 @@ jobs:
           # This will be handled by the PHP script, but we can create it via FTP if needed
           echo "✅ Uploads directory will be created by PHP script on first upload"
 
+

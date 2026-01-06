@@ -189,3 +189,4 @@ If issues persist:
 4. Verify file structure and permissions
 5. Contact Hostinger support with specific error messages
 
+
