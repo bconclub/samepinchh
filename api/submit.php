@@ -339,27 +339,22 @@ mail($to, $subject, $message, $headers);
 $webhook_url = 'https://build.goproxe.com/webhook/samepinchh-website';
 
 // Collect all form data including UTM parameters
+// Always include both text and audio fields (even if empty) for consistent webhook structure
 $webhook_data = [
     'name' => $name,
     'contact' => $contact,
     'date' => $date,
     'timestamp' => $response_data['timestamp'],
     'has_audio' => $has_audio,
-    'has_text' => $has_text
+    'has_text' => $has_text,
+    // Always include text fields (empty string if no text)
+    'story_text' => $has_text ? $story_text : '',
+    'message' => $has_text ? $story_text : '',
+    // Always include audio fields (null or empty if no audio)
+    'audio_file' => $has_audio ? $response_data['audio_file'] : null,
+    'audio_size' => $has_audio ? $response_data['audio_size'] : null,
+    'audio_mime_type' => $has_audio ? $response_data['audio_mime_type'] : null
 ];
-
-// Add text message if present
-if ($has_text) {
-    $webhook_data['story_text'] = $story_text;
-    $webhook_data['message'] = $story_text;
-}
-
-// Add audio file info if present
-if ($has_audio) {
-    $webhook_data['audio_file'] = $response_data['audio_file'];
-    $webhook_data['audio_size'] = $response_data['audio_size'];
-    $webhook_data['audio_mime_type'] = $response_data['audio_mime_type'];
-}
 
 // Add UTM parameters to webhook data (always include all, even if empty)
 foreach ($utm_keys as $key) {
