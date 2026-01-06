@@ -39,6 +39,31 @@ export default function VideoModal({ isOpen, onClose, vimeoVideoId }: VideoModal
         }
     }, [isOpen]);
 
+    // Listen for video play events and ensure volume stays at 50%
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleMessage = (event: MessageEvent) => {
+            if (event.origin !== 'https://player.vimeo.com') return;
+            if (typeof event.data === 'string') {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.event === 'play' && iframeRef.current) {
+                        // Set volume to 50% when video plays
+                        setTimeout(() => {
+                            iframeRef.current?.contentWindow?.postMessage('{"method":"setVolume","value":0.5}', 'https://player.vimeo.com');
+                        }, 100);
+                    }
+                } catch (e) {
+                    // Not JSON, ignore
+                }
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, [isOpen]);
+
     return (
         <AnimatePresence>
             {isOpen && (
