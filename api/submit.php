@@ -138,6 +138,16 @@ $response_data = [
     'timestamp' => date('Y-m-d H:i:s')
 ];
 
+// Collect UTM parameters and add to response
+$utm_keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+$utm_params = [];
+foreach ($utm_keys as $key) {
+    if (isset($_POST[$key]) && !empty($_POST[$key])) {
+        $utm_params[$key] = $_POST[$key];
+        $response_data[$key] = $_POST[$key]; // Add to response for debugging
+    }
+}
+
 // Handle audio file upload
 if ($has_audio) {
     $file = $_FILES['audio'];
@@ -397,11 +407,10 @@ if ($has_audio) {
     $webhook_data['audio_mime_type'] = $response_data['audio_mime_type'];
 }
 
-// Collect UTM parameters from POST data
-$utm_keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+// Add UTM parameters to webhook data (already collected above and added to response_data)
 foreach ($utm_keys as $key) {
-    if (isset($_POST[$key]) && !empty($_POST[$key])) {
-        $webhook_data[$key] = $_POST[$key];
+    if (isset($utm_params[$key])) {
+        $webhook_data[$key] = $utm_params[$key];
     }
 }
 

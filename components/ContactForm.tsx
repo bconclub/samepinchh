@@ -542,6 +542,16 @@ export default function ContactForm() {
             if (result.webhook_error) {
                 console.error('Webhook error:', result.webhook_error);
             }
+            
+            // Log UTM parameters
+            console.log('=== UTM PARAMETERS ===');
+            const utmParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+            utmParams.forEach(key => {
+                if (result[key]) {
+                    console.log(`${key}:`, result[key]);
+                }
+            });
+            
             console.log('Full response:', result);
             
             // Redirect to thank you page with file information
