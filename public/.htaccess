@@ -1,0 +1,30 @@
+# Enable Rewrite Engine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Redirect /thank-you to /thank-you.html
+    RewriteRule ^thank-you/?$ /thank-you.html [L,R=301]
+
+    # Handle clean URLs for other pages
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ /$1.html [L]
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Allow access to thank-you.html
+<Files "thank-you.html">
+    Order allow,deny
+    Allow from all
+</Files>
+

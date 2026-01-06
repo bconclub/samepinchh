@@ -575,8 +575,8 @@ export default function ContactForm() {
             ...(payload.audioDuration && { audioDuration: payload.audioDuration.toString() }),
             ...(payload.audioFile && { audioFile: payload.audioFile })
         });
-        // Use window.location for static exports to avoid HEAD request prefetching issues
-        window.location.href = `/thank-you?${params.toString()}`;
+        // Use .html extension for static exports to avoid 403 errors
+        window.location.href = `/thank-you.html?${params.toString()}`;
     };
 
     return (
