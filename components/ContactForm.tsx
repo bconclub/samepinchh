@@ -188,6 +188,20 @@ export default function ContactForm() {
             );
         }
         
+        // Always use the Saturday that's at least 7 days away (skip this coming Saturday)
+        // If the calculated Saturday is less than 7 days away, add 7 more days
+        const daysUntilCalculatedSaturday = Math.floor((nextSaturday.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        if (daysUntilCalculatedSaturday < 7) {
+            targetDate = new Date(targetComponents.year, targetComponents.month, targetComponents.date + 7);
+            targetComponents = getISTComponents(targetDate);
+            nextSaturday = createISTDate(
+                targetComponents.year,
+                targetComponents.month,
+                targetComponents.date,
+                19, 0, 0
+            );
+        }
+        
         return nextSaturday;
     };
     
@@ -236,6 +250,20 @@ export default function ContactForm() {
             // If we've passed this Saturday 7 PM IST, get next Saturday
             if (now.getTime() > nextSaturday.getTime()) {
                 // Add 7 days to the target date
+                targetDate = new Date(targetComponents.year, targetComponents.month, targetComponents.date + 7);
+                targetComponents = getISTComponents(targetDate);
+                nextSaturday = createISTDate(
+                    targetComponents.year,
+                    targetComponents.month,
+                    targetComponents.date,
+                    19, 0, 0
+                );
+            }
+            
+            // Always use the Saturday that's at least 7 days away (skip this coming Saturday)
+            // If the calculated Saturday is less than 7 days away, add 7 more days
+            const daysUntilCalculatedSaturday = Math.floor((nextSaturday.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+            if (daysUntilCalculatedSaturday < 7) {
                 targetDate = new Date(targetComponents.year, targetComponents.month, targetComponents.date + 7);
                 targetComponents = getISTComponents(targetDate);
                 nextSaturday = createISTDate(
