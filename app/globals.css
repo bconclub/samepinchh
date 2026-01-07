@@ -21,7 +21,7 @@
 }
 
 @font-face {
-  font-family: 'Shadows Into Light Two';
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   src: url('/ShadowsIntoLightTwo-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
@@ -60,7 +60,7 @@ html {
 body {
   color: var(--text-primary);
   background: var(--bg-primary);
-  font-family: 'Shadows Into Light Two', sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   overflow-x: hidden;
   min-height: 100vh;
   font-size: 22px;
@@ -117,7 +117,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-classyvogue), sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 700;
 }
 
@@ -131,9 +131,9 @@ h6 {
     font-size: calc(48px * 0.75);
   }
   
-  /* Hero title - larger on mobile */
+  /* Hero title - 20% bigger on mobile */
   .hero__title {
-    font-size: 44px !important;
+    font-size: 50px !important;
   }
   
   h2, h3 {
@@ -191,8 +191,18 @@ section.brand-section {
    ============================================ */
 
 .hero-section {
-  min-height: 100vh;
+  min-height: 120vh;
   scroll-margin-top: 0;
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
+
+@media (min-width: 768px) {
+  .hero-section {
+    min-height: 100vh;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
 }
 
 .hero-background-image {
@@ -205,10 +215,17 @@ section.brand-section {
 
 .hero-content-wrapper {
   transform: translateY(20%);
+  padding: 20px 0;
+}
+
+@media (min-width: 768px) {
+  .hero-content-wrapper {
+    padding: 40px 0;
+  }
 }
 
 .hero-title {
-  font-family: var(--font-classyvogue), sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   color: #D9D9D9;
   font-weight: 700;
   line-height: 1.2;
@@ -268,7 +285,7 @@ section.brand-section {
 }
 
 .brand-title {
-  font-family: var(--font-classyvogue), sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   color: #000000;
   font-weight: 700;
   line-height: 1.2;
@@ -285,7 +302,7 @@ section.brand-section {
 }
 
 .tagline {
-  font-family: var(--font-classyvogue), sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   color: #000000;
   font-weight: 300;
   line-height: 1.4;
@@ -339,7 +356,7 @@ section.brand-section {
 }
 
 .info-carousel-card-title {
-  font-family: var(--font-classyvogue), sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   color: #000000;
   font-weight: 900;
   font-size: 32px;
@@ -348,7 +365,7 @@ section.brand-section {
 }
 
 .info-carousel-card-description {
-  font-family: 'Shadows Into Light Two', sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   color: var(--text-primary);
   font-size: 22px;
   line-height: 1.7;
@@ -534,7 +551,7 @@ section.brand-section {
 }
 
 .footer-text {
-  font-family: 'Shadows Into Light Two', sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   color: var(--text-muted);
   font-size: 17px;
   font-weight: 500;
@@ -577,7 +594,7 @@ section.brand-section {
 }
 
 .details-card-title {
-  font-family: var(--font-classyvogue), sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   color: #000000;
   font-weight: 900;
   font-size: 32px;
@@ -586,7 +603,7 @@ section.brand-section {
 }
 
 .details-card-description {
-  font-family: 'Shadows Into Light Two', sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   color: var(--text-primary);
   font-size: 22px;
   line-height: 1.7;
@@ -620,7 +637,7 @@ section.brand-section {
 }
 
 .contact-form-title {
-  font-family: var(--font-classyvogue), sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   color: #000000;
   font-weight: 900;
   font-size: 32px;
@@ -630,7 +647,7 @@ section.brand-section {
 }
 
 .contact-form-label {
-  font-family: 'Shadows Into Light Two', sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   color: var(--text-primary);
   font-size: 17px;
   font-weight: 700;
@@ -639,16 +656,16 @@ section.brand-section {
 
 .contact-form-input {
   color: #000000;
-  font-family: 'Shadows Into Light Two', sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
 }
 
 .contact-form-textarea {
   color: #000000;
-  font-family: 'Shadows Into Light Two', sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
 }
 
 .contact-form-submit {
-  font-family: 'Shadows Into Light Two', sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   font-size: 22px;
   background-color: #000000;
   color: #ffffff;
@@ -725,7 +742,7 @@ section.brand-section {
 }
 
 .why-this-exists-content {
-  font-family: var(--font-classyvogue), sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   color: var(--text-primary);
   font-weight: 700;
   font-size: 28px;
@@ -764,7 +781,7 @@ section.brand-section {
 }
 
 .react-datepicker {
-  font-family: 'Shadows Into Light Two', sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   border: 2px solid rgba(0, 0, 0, 0.2);
   border-radius: 12px;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
@@ -782,7 +799,7 @@ section.brand-section {
 }
 
 .react-datepicker__current-month {
-  font-family: var(--font-classyvogue), sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 700;
   font-size: 18px;
   color: #000000;
@@ -796,7 +813,7 @@ section.brand-section {
 }
 
 .react-datepicker__day-name {
-  font-family: 'Shadows Into Light Two', sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 700;
   font-size: 14px;
   color: #000000;
@@ -815,7 +832,7 @@ section.brand-section {
 }
 
 .react-datepicker__day {
-  font-family: 'Shadows Into Light Two', sans-serif;
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
   width: 36px;
   height: 36px;

@@ -13,7 +13,7 @@ export default function Intro() {
                 className="max-w-[700px] mx-auto bg-white p-6 md:p-[40px] rounded-[16px] border-2 border-black"
                 style={{ boxShadow: '8px 8px 16px rgba(0, 0, 0, 0.1), -4px -4px 12px rgba(0, 0, 0, 0.05)' }}
             >
-                <div className="space-y-6 text-[22px] leading-[1.7] text-black" style={{ fontFamily: "'Shadows Into Light Two', sans-serif" }}>
+                <div className="space-y-6 text-[22px] leading-[1.7] text-black" style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif" }}>
                     <p>
                         I&apos;ve been there. I know how it feels when no one really gets it.
                     </p>

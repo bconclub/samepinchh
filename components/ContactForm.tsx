@@ -597,7 +597,7 @@ export default function ContactForm() {
 
     return (
         <section id="contact" className="contact-form contact-form-section relative px-6 max-w-xl mx-auto z-10">
-            <div className="meetup-banner bg-black text-white text-center py-3 px-4 rounded-lg mb-6" style={{ fontFamily: 'var(--font-classyvogue), sans-serif' }}>
+            <div className="meetup-banner bg-black text-white text-center py-3 px-4 rounded-lg mb-6" style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif" }}>
                 <div className="flex flex-col items-center gap-2">
                     {/* Mobile: Three lines */}
                     <div className="flex flex-col items-center gap-1 sm:hidden">
@@ -630,7 +630,7 @@ export default function ContactForm() {
             >
                 <div className="text-center" style={{ lineHeight: '1.2' }}>
                     <h3 className="contact-form__title contact-form-title" style={{ marginBottom: '4px' }}>Join Your Space</h3>
-                    <p style={{ fontFamily: 'var(--font-classyvogue), sans-serif', fontSize: '20px', letterSpacing: '0.05em', marginTop: '0' }}>(Online)</p>
+                    <p style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", fontSize: '20px', letterSpacing: '0.05em', marginTop: '0' }}>(Online)</p>
                 </div>
                 <form className="contact-form__form space-y-3" onSubmit={handleSubmit}>
                     <div className="contact-form__field space-y-1">

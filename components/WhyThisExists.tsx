@@ -12,7 +12,7 @@ export default function WhyThisExists() {
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="why-this-exists__container why-this-exists-container relative frosted-glass shadow-lg"
                 style={{
-                    fontFamily: "'Shadows Into Light Two', sans-serif",
+                    fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif",
                     transform: 'rotate(2deg)',
                     backgroundImage: `
                         repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),

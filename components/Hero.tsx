@@ -83,22 +83,32 @@ export default function Hero() {
                 }}
             >
                 <h1 className="hero__title hero-title mb-3">
-                    {"Survived something that changed everything".split(' ').map((word, index) => (
-                        <motion.span
-                            key={index}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ 
-                                duration: 0.5, 
-                                delay: index * 0.1, 
-                                ease: "easeOut" 
-                            }}
-                            className="inline-block"
-                        >
-                            {word}
-                            {index < "Survived something that changed everything".split(' ').length - 1 && '\u00A0'}
-                        </motion.span>
-                    ))}
+                    {"Survived something that changed everything".split(' ').map((word, index) => {
+                        // Capitalize first letter of each word
+                        const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
+                        // Check if word is "something" or "everything" (case-insensitive)
+                        const isBold = word.toLowerCase() === 'something' || word.toLowerCase() === 'everything';
+                        
+                        return (
+                            <motion.span
+                                key={index}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ 
+                                    duration: 0.5, 
+                                    delay: index * 0.1, 
+                                    ease: "easeOut" 
+                                }}
+                                className={`inline-block ${isBold ? 'font-black' : 'font-light'}`}
+                                style={{
+                                    fontWeight: isBold ? 900 : 300
+                                }}
+                            >
+                                {capitalizedWord}
+                                {index < "Survived something that changed everything".split(' ').length - 1 && '\u00A0'}
+                            </motion.span>
+                        );
+                    })}
                 </h1>
             </motion.div>
 

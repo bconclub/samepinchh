@@ -47,7 +47,7 @@ export default function HeroVideo() {
                 <div className="hero-video__header mb-6 text-center">
                     <h2 
                         className="hero-video__title text-[36px] md:text-[42px] font-bold mb-4 tracking-wide"
-                        style={{ fontFamily: 'var(--font-classyvogue), sans-serif', color: '#000000' }}
+                        style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: '#000000' }}
                     >
                         What is Samepinchh
                     </h2>
@@ -142,7 +142,7 @@ export default function HeroVideo() {
                     </div>
                 </div>
 
-                {/* My Story Button */}
+                {/* My Journey Button */}
                 <div className="mt-8 md:mt-10 text-center relative z-10 w-full">
                     <motion.button
                         initial={{ opacity: 0, y: 10 }}
@@ -155,7 +155,7 @@ export default function HeroVideo() {
                         style={{
                             background: '#000000',
                             color: '#ffffff',
-                            fontFamily: "'Shadows Into Light Two', sans-serif",
+                            fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif",
                             boxShadow: '6px 6px 12px rgba(0, 0, 0, 0.3)'
                         }}
                         onMouseEnter={(e) => {
@@ -165,7 +165,7 @@ export default function HeroVideo() {
                             e.currentTarget.style.background = '#000000';
                         }}
                     >
-                        My Story
+                        My Journey
                     </motion.button>
                 </div>
             </motion.div>

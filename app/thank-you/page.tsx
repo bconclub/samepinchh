@@ -67,13 +67,13 @@ function ThankYouContent() {
                         <div className="text-6xl mb-4">✓</div>
                         <h1 
                             className="text-[36px] md:text-[42px] font-black mb-4 tracking-wide"
-                            style={{ fontFamily: 'var(--font-classyvogue), sans-serif', color: '#000000' }}
+                            style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: '#000000' }}
                         >
                             Thank You!
                         </h1>
                         <p 
                             className="text-[18px] md:text-[20px] mb-6"
-                            style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: 'var(--text-primary)' }}
+                            style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: 'var(--text-primary)' }}
                         >
                             We&apos;ve received your message and will get back to you soon.
                         </p>
@@ -89,7 +89,7 @@ function ThankYouContent() {
                         >
                             <h2 
                                 className="text-[24px] font-bold mb-4"
-                                style={{ fontFamily: 'var(--font-classyvogue), sans-serif', color: '#000000' }}
+                                style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: '#000000' }}
                             >
                                 Confirmation Details
                             </h2>
@@ -97,13 +97,13 @@ function ThankYouContent() {
                                 <div>
                                     <p 
                                         className="text-[16px] font-bold mb-1"
-                                        style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: 'var(--text-muted)' }}
+                                        style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: 'var(--text-muted)' }}
                                     >
                                         Name:
                                     </p>
                                     <p 
                                         className="text-[18px]"
-                                        style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: '#000000' }}
+                                        style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: '#000000' }}
                                     >
                                         {formData.name}
                                     </p>
@@ -112,13 +112,13 @@ function ThankYouContent() {
                                     <div>
                                         <p 
                                             className="text-[16px] font-bold mb-1"
-                                            style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: 'var(--text-muted)' }}
+                                            style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: 'var(--text-muted)' }}
                                         >
                                             Contact:
                                         </p>
                                         <p 
                                             className="text-[18px]"
-                                            style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: '#000000' }}
+                                            style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: '#000000' }}
                                         >
                                             {formData.contact}
                                         </p>
@@ -128,13 +128,13 @@ function ThankYouContent() {
                                     <div>
                                         <p 
                                             className="text-[16px] font-bold mb-1"
-                                            style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: 'var(--text-muted)' }}
+                                            style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: 'var(--text-muted)' }}
                                         >
                                             What brought you here:
                                         </p>
                                         <p 
                                             className="text-[18px]"
-                                            style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: '#000000' }}
+                                            style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: '#000000' }}
                                         >
                                             {formData.message}
                                         </p>
@@ -144,7 +144,7 @@ function ThankYouContent() {
                                     <div>
                                         <p 
                                             className="text-[16px] font-bold mb-2"
-                                            style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: 'var(--text-muted)' }}
+                                            style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: 'var(--text-muted)' }}
                                         >
                                             What brought you here:
                                         </p>
@@ -152,7 +152,7 @@ function ThankYouContent() {
                                             <div className="flex items-center gap-3 mb-2">
                                                 <span 
                                                     className="text-[14px] font-semibold"
-                                                    style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: '#000000' }}
+                                                    style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: '#000000' }}
                                                 >
                                                     {formData.name ? `${formData.name}'s recording` : 'Audio recording'}
                                                     {formData.audioDuration && ` (${formatDuration(formData.audioDuration)})`}
@@ -193,7 +193,7 @@ function ThankYouContent() {
                                 style={{
                                     background: '#000000',
                                     color: '#ffffff',
-                                    fontFamily: "'Shadows Into Light Two', sans-serif",
+                                    fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif",
                                     boxShadow: '6px 6px 12px rgba(0, 0, 0, 0.3)'
                                 }}
                                 onMouseEnter={(e) => {
@@ -222,7 +222,7 @@ export default function ThankYouPage() {
                 <Header />
                 <section className="relative py-12 md:py-[80px] px-6 max-w-2xl mx-auto z-10 min-h-[80vh] flex items-center justify-center">
                     <div className="text-center">
-                        <p style={{ fontFamily: "'Shadows Into Light Two', sans-serif", color: '#000000' }}>Loading...</p>
+                        <p style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: '#000000' }}>Loading...</p>
                     </div>
                 </section>
                 <Footer />

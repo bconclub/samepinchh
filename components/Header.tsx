@@ -41,7 +41,7 @@ export default function Header() {
                         href="#contact" 
                         className="px-6 py-2 rounded-[12px] font-bold text-base transition-all"
                         style={{ 
-                            fontFamily: "'Shadows Into Light Two', sans-serif",
+                            fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif",
                             background: '#000000',
                             color: '#ffffff',
                             boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.2)'

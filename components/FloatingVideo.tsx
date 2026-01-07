@@ -165,7 +165,7 @@ export default function FloatingVideo() {
                     )}
                 </div>
 
-                {/* My Story Button - Right below the video */}
+                {/* My Journey Button - Right below the video */}
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -182,7 +182,7 @@ export default function FloatingVideo() {
                         style={{
                             background: '#000000',
                             color: '#ffffff',
-                            fontFamily: "'Shadows Into Light Two', sans-serif",
+                            fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif",
                             boxShadow: '6px 6px 12px rgba(0, 0, 0, 0.3)'
                         }}
                         onMouseEnter={(e) => {
@@ -199,7 +199,7 @@ export default function FloatingVideo() {
                         >
                             <path d="M8 5v14l11-7z" fill="currentColor"/>
                         </svg>
-                        My Story
+                        My Journey
                     </motion.button>
                 </motion.div>
             </motion.div>
