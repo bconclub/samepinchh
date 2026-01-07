@@ -13,10 +13,12 @@ import { join } from 'path';
 export async function POST(request: NextRequest) {
     try {
         // Get the PHP endpoint URL from environment variable
+        // In production, use the production PHP server URL
+        // In development, use localhost
         const phpEndpoint = process.env.NEXT_PUBLIC_UPLOAD_URL || 
             (process.env.NODE_ENV === 'development' 
                 ? 'http://localhost:8000/api/submit.php'
-                : null);
+                : 'https://samepinchh.com/api/submit.php'); // Production PHP endpoint
 
         if (!phpEndpoint) {
             return NextResponse.json(
