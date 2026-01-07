@@ -12,7 +12,7 @@ export default function Footer() {
             transition={{ duration: 1 }}
             viewport={{ once: true }}
             className="footer footer-section w-full text-center flex flex-col items-center gap-3"
-            style={{ paddingBottom: '20px' }}
+            style={{ paddingBottom: '40px' }}
         >
             <Image
                 src="/Samepinchh logo.png"
