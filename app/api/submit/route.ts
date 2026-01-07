@@ -69,6 +69,20 @@ export async function POST(request: NextRequest) {
 
         const responseText = await response.text();
         
+        // Check if response is HTML (error page) instead of JSON
+        if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: 'Server returned HTML instead of JSON',
+                    message: 'The PHP server returned an HTML error page. This usually means the PHP file has an error or the server is misconfigured. Please check the PHP server logs.',
+                    isHtmlResponse: true,
+                    status: response.status
+                },
+                { status: response.status || 500 }
+            );
+        }
+        
         // Try to parse as JSON
         let result;
         try {
@@ -79,7 +93,7 @@ export async function POST(request: NextRequest) {
                 {
                     success: false,
                     error: 'Invalid response from server',
-                    message: responseText.substring(0, 200),
+                    message: 'The server returned an unexpected response format. Expected JSON but received: ' + responseText.substring(0, 100) + '...',
                     status: response.status
                 },
                 { status: response.status || 500 }

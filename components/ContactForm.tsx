@@ -611,7 +611,13 @@ export default function ContactForm() {
                 result = JSON.parse(responseText);
             } catch (parseError) {
                 console.error('Failed to parse JSON response:', parseError);
-                throw new Error(`Server returned invalid response: ${responseText.substring(0, 100)}`);
+                
+                // Check if response is HTML
+                if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
+                    throw new Error('Server returned an HTML error page instead of JSON. The PHP server may have an error. Please contact support.');
+                }
+                
+                throw new Error(`Server returned invalid response format. Expected JSON but received: ${responseText.substring(0, 100)}...`);
             }
             
             if (!response.ok) {
@@ -667,6 +673,10 @@ export default function ContactForm() {
             // Check if it's a PHP server connection error
             if (userMessage.includes('PHP server is not running') || userMessage.includes('Could not connect')) {
                 userMessage = 'PHP server is not running.\n\nTo fix this:\n1. Open a terminal in the project root\n2. Run: php -S localhost:8000\n3. Then try submitting again';
+            } else if (userMessage.includes('HTML error page') || userMessage.includes('Server returned HTML')) {
+                userMessage = 'Server configuration error.\n\nThe PHP server returned an error page. This may be a server-side issue. Please try again later or contact support.';
+            } else if (userMessage.includes('Invalid response from server')) {
+                userMessage = 'Server error.\n\nThe server returned an unexpected response. Please try again or contact support if the problem persists.';
             }
             
             // Show detailed error message
