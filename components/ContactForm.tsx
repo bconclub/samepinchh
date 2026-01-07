@@ -3,11 +3,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mic, MicOff, Lock, Heart, Shield } from 'lucide-react';
+import { Mic, MicOff, Lock, Heart, Shield, Calendar } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import TagSelector, { type Tag } from './TagSelector';
 import InputToggle from './InputToggle';
-import VoiceBlob from './VoiceBlob';
 
 // @ts-ignore - react-datepicker types conflict with Next.js dynamic import  
 const DatePicker: any = dynamic(
@@ -154,6 +153,7 @@ export default function ContactForm() {
     const [mediaRecorderSupported, setMediaRecorderSupported] = useState(true);
     const [showWarning, setShowWarning] = useState(false);
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+    const [currentStep, setCurrentStep] = useState(1);
     
     // Calculate initial next Saturday date in IST
     const calculateNextSaturday = () => {
@@ -287,6 +287,27 @@ export default function ContactForm() {
         };
         
         return `${day}${getOrdinalSuffix(day)} ${month}, ${dayName} 7PM IST`;
+    };
+
+    const formatSimpleDate = (date: Date): string => {
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const components = getISTComponents(date);
+        const day = components.date;
+        const month = months[components.month];
+        const year = components.year;
+        
+        // Get ordinal suffix (st, nd, rd, th)
+        const getOrdinalSuffix = (n: number): string => {
+            if (n > 3 && n < 21) return 'th';
+            switch (n % 10) {
+                case 1: return 'st';
+                case 2: return 'nd';
+                case 3: return 'rd';
+                default: return 'th';
+            }
+        };
+        
+        return `${day}${getOrdinalSuffix(day)} ${month} ${year}`;
     };
 
     // Cleanup on unmount
@@ -450,6 +471,31 @@ export default function ContactForm() {
         return utmParams;
     };
 
+    const handleStep1Next = (e: React.FormEvent) => {
+        e.preventDefault();
+        
+        // Validate step 1 fields
+        if (!formData.name.trim()) {
+            alert('Please enter your name');
+            return;
+        }
+        if (!formData.contact.trim()) {
+            alert('Please enter your contact information');
+            return;
+        }
+        if (!formData.selectedDate) {
+            alert('Please select a date');
+            return;
+        }
+        
+        // Move to step 2
+        setCurrentStep(2);
+    };
+
+    const handleStep2Back = () => {
+        setCurrentStep(1);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
@@ -514,6 +560,14 @@ export default function ContactForm() {
             formDataToSend.append('tags', JSON.stringify(selectedTags));
         }
         
+        // Add input mode
+        formDataToSend.append('input_mode', inputMode);
+        
+        // Add audio duration if available
+        if (audioBlob && recordingTime) {
+            formDataToSend.append('audio_duration', recordingTime.toString());
+        }
+        
         // Send to PHP upload endpoint
         await sendToUploadEndpoint(formDataToSend, {
             name: formData.name,
@@ -528,12 +582,14 @@ export default function ContactForm() {
     
     const sendToUploadEndpoint = async (formData: FormData, payload: any) => {
         try {
-            // Get upload endpoint URL from environment variable or use default
-            // Use absolute URL to avoid path issues with static exports
+            // Get upload endpoint URL from environment variable or use Next.js API route
+            // For development: Next.js API route at /api/submit will proxy to PHP
+            // For production: Set NEXT_PUBLIC_UPLOAD_URL to your PHP server URL
+            // (e.g., https://yourdomain.com/api/submit.php)
             const uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL || 
                 (typeof window !== 'undefined' 
-                    ? `${window.location.origin}/api/submit.php`
-                    : '/api/submit.php');
+                    ? `${window.location.origin}/api/submit`
+                    : '/api/submit');
             
             console.log('Uploading to:', uploadUrl);
             console.log('Form data keys:', Array.from(formData.keys()));
@@ -605,9 +661,16 @@ export default function ContactForm() {
                 name: error.name
             });
             
+            // Extract user-friendly error message
+            let userMessage = error.message || 'Please try again';
+            
+            // Check if it's a PHP server connection error
+            if (userMessage.includes('PHP server is not running') || userMessage.includes('Could not connect')) {
+                userMessage = 'PHP server is not running.\n\nTo fix this:\n1. Open a terminal in the project root\n2. Run: php -S localhost:8000\n3. Then try submitting again';
+            }
+            
             // Show detailed error message
-            const errorMessage = error.message || 'Please try again';
-            alert(`Failed to submit form:\n\n${errorMessage}\n\nPlease check the browser console for more details.`);
+            alert(`Failed to submit form:\n\n${userMessage}\n\nPlease check the browser console for more details.`);
             // Optionally still redirect to thank you page even if upload fails
             // redirectToThankYou(payload);
         }
@@ -631,31 +694,23 @@ export default function ContactForm() {
         <section id="contact" className="contact-form contact-form-section relative px-6 max-w-xl mx-auto z-10">
             <div className="meetup-banner bg-black text-white text-center py-3 px-4 rounded-lg mb-6" style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif" }}>
                 <div className="flex flex-col items-center gap-2">
-                    {/* Mobile: Three lines */}
-                    <div className="flex flex-col items-center gap-1 sm:hidden">
-                        <p className="font-black text-[23px]" style={{ letterSpacing: '0.05em' }}>
+                    {/* Three lines - same format for mobile and desktop */}
+                    <div className="flex flex-col items-center gap-1">
+                        <p className="text-[18px] sm:text-[16px]" style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", fontWeight: 300, letterSpacing: '0.05em' }}>
                             Next Space in
                         </p>
-                        <p className="font-black text-[23px]" style={{ letterSpacing: '0.05em' }}>
-                            {countdown.days} {countdown.days === 1 ? 'day' : 'days'} {countdown.hours} {countdown.hours === 1 ? 'hour' : 'hours'}
+                        <p className="text-[32px] sm:text-[36px]" style={{ fontFamily: 'var(--font-classyvogue), sans-serif', fontWeight: 700, letterSpacing: '0.05em' }}>
+                            {countdown.days} {countdown.days === 1 ? 'day' : 'days'} and {countdown.hours} {countdown.hours === 1 ? 'hour' : 'hours'}
                         </p>
-                        <p className="font-bold text-white text-[21px]">
-                            17 Saturday
-                        </p>
-                    </div>
-                    {/* Desktop: Two lines */}
-                    <div className="hidden sm:flex flex-col items-center gap-2">
-                        <p className="font-black text-[25px]" style={{ letterSpacing: '0.05em' }}>
-                            Next Space in {countdown.days} {countdown.days === 1 ? 'day' : 'days'} and {countdown.hours} {countdown.hours === 1 ? 'hour' : 'hours'}
-                        </p>
-                        <p className="font-bold text-white text-[23px]">
-                            17 Saturday
+                        <p className="text-[20px] flex items-center gap-2" style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", fontWeight: 400 }}>
+                            <Calendar size={18} className="inline-block" />
+                            {formatSimpleDate(nextSpaceDate)}
                         </p>
                     </div>
                 </div>
             </div>
             <div className="text-center text-sm text-gray-600 mb-6">
-                7 slots left
+                7/10 Seats Filled
             </div>
             <div
                 className="contact-form__container contact-form-container frosted-glass rounded-[16px]"
@@ -663,8 +718,24 @@ export default function ContactForm() {
                 <div className="text-center" style={{ lineHeight: '1.2' }}>
                     <h3 className="contact-form__title contact-form-title" style={{ marginBottom: '4px' }}>Join Your Space</h3>
                     <p style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", fontSize: '20px', letterSpacing: '0.05em', marginTop: '0' }}>(Online)</p>
+                    {/* Step indicator */}
+                    <div className="flex items-center justify-center gap-2 mt-4 mb-2">
+                        <div className={`h-2 w-8 rounded-full transition-all ${currentStep === 1 ? 'bg-black' : 'bg-gray-300'}`}></div>
+                        <div className={`h-2 w-8 rounded-full transition-all ${currentStep === 2 ? 'bg-black' : 'bg-gray-300'}`}></div>
+                    </div>
                 </div>
-                <form className="contact-form__form space-y-3" onSubmit={handleSubmit}>
+                
+                <AnimatePresence mode="wait">
+                    {currentStep === 1 ? (
+                        <motion.form
+                            key="step1"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            transition={{ duration: 0.3 }}
+                            className="contact-form__form space-y-3"
+                            onSubmit={handleStep1Next}
+                        >
                     <div className="contact-form__field space-y-1">
                         <label className="contact-form__label contact-form-label">Name</label>
                         <input
@@ -752,160 +823,187 @@ export default function ContactForm() {
                         )}
                     </div>
 
-                    <div className="contact-form__field space-y-1">
-                        <InputToggle mode={inputMode} onModeChange={handleModeChange} />
-                        
-                        <AnimatePresence mode="wait">
-                            {inputMode === 'text' ? (
-                                <motion.div
-                                    key="text-input"
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 10 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="relative"
-                                >
-                                    <textarea
-                                        rows={4}
-                                        required={!audioBlob}
-                                        value={formData.message}
-                                        maxLength={500}
-                                        onChange={(e) => {
-                                            setFormData({ ...formData, message: e.target.value });
-                                            // If user types, clear audio recording
-                                            if (e.target.value.trim() && audioBlob) {
-                                                resetRecording();
-                                            }
-                                        }}
-                                        className="contact-form__textarea contact-form-textarea w-full px-3 py-2 rounded-[12px] frosted-glass border-2 border-black/30 focus:outline-none focus:ring-2 focus:ring-black/20 transition-all placeholder:text-gray-500 resize-none"
-                                        placeholder="Share your story..."
-                                    />
-                                    <div className="text-right text-xs text-gray-500 mt-1">
-                                        {formData.message.length}/500
-                                    </div>
-                                </motion.div>
-                            ) : (
-                                <motion.div
-                                    key="voice-input"
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 10 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="space-y-4"
-                                >
-                                    <div className="flex flex-col items-center justify-center py-8 rounded-[12px] frosted-glass border-2 border-black/30">
-                                        {recordingState === 'recording' && (
-                                            <div className="mb-4">
-                                                <VoiceBlob 
-                                                    isRecording={recordingState === 'recording'} 
-                                                    audioStream={audioStream}
-                                                />
-                                            </div>
-                                        )}
-                                        
-                                        <div className="flex flex-col items-center gap-3">
-                                            {recordingState === 'recording' && (
-                                                <div className="text-lg font-bold text-red-600">
-                                                    {formatTime(recordingTime)}
-                                                </div>
-                                            )}
-                                            
-                                            {mediaRecorderSupported ? (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        if (recordingState === 'idle') {
-                                                            startRecording();
-                                                        } else if (recordingState === 'recording') {
-                                                            stopRecording();
-                                                        } else if (recordingState === 'stopped') {
-                                                            resetRecording();
-                                                        }
-                                                    }}
-                                                    disabled={micPermissionDenied || (recordingState === 'recording' && recordingTime >= 60)}
-                                                    className={`contact-form__mic-button p-4 rounded-full transition-all flex items-center justify-center ${
-                                                        recordingState === 'recording'
-                                                            ? 'bg-red-500 text-white shadow-lg'
-                                                            : recordingState === 'stopped'
-                                                            ? 'bg-gray-400 text-white'
-                                                            : micPermissionDenied
-                                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                            : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
-                                                    }`}
-                                                    title={
-                                                        micPermissionDenied
-                                                            ? 'Microphone access denied'
-                                                            : recordingState === 'recording'
-                                                            ? 'Stop recording'
-                                                            : recordingState === 'stopped'
-                                                            ? 'Re-record'
-                                                            : 'Start recording'
+                            <motion.button
+                                whileHover={{
+                                    y: -4,
+                                    scale: 1.02,
+                                    boxShadow: "12px 12px 24px rgba(0, 0, 0, 0.25), -6px -6px 16px rgba(0, 0, 0, 0.15)"
+                                }}
+                                whileTap={{ scale: 0.98 }}
+                                type="submit"
+                                className="contact-form__submit contact-form-submit w-full font-black py-3 rounded-[12px] transition-all mt-2"
+                            >
+                                Next
+                            </motion.button>
+                        </motion.form>
+                    ) : (
+                        <motion.form
+                            key="step2"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.3 }}
+                            className="contact-form__form space-y-3"
+                            onSubmit={handleSubmit}
+                        >
+                            <div className="contact-form__field space-y-1">
+                                <InputToggle mode={inputMode} onModeChange={handleModeChange} />
+                                
+                                <AnimatePresence mode="wait">
+                                    {inputMode === 'text' ? (
+                                        <motion.div
+                                            key="text-input"
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: 10 }}
+                                            transition={{ duration: 0.3 }}
+                                            className="relative"
+                                        >
+                                            <textarea
+                                                rows={4}
+                                                required={!audioBlob}
+                                                value={formData.message}
+                                                maxLength={500}
+                                                onChange={(e) => {
+                                                    setFormData({ ...formData, message: e.target.value });
+                                                    // If user types, clear audio recording
+                                                    if (e.target.value.trim() && audioBlob) {
+                                                        resetRecording();
                                                     }
-                                                >
-                                                    {micPermissionDenied ? (
-                                                        <MicOff size={24} />
-                                                    ) : (
-                                                        <Mic size={24} />
+                                                }}
+                                                className="contact-form__textarea contact-form-textarea w-full px-3 py-2 rounded-[12px] frosted-glass border-2 border-black/30 focus:outline-none focus:ring-2 focus:ring-black/20 transition-all placeholder:text-gray-500 resize-none"
+                                                placeholder="Share your story..."
+                                            />
+                                            <div className="text-right text-xs text-gray-500 mt-1">
+                                                {formData.message.length}/500
+                                            </div>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="voice-input"
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: 10 }}
+                                            transition={{ duration: 0.3 }}
+                                            className="space-y-4"
+                                        >
+                                            <div className="flex flex-col items-center justify-center py-8 rounded-[12px] frosted-glass border-2 border-black/30">
+                                                <div className="flex flex-col items-center gap-3">
+                                                    {recordingState === 'recording' && (
+                                                        <div className="text-lg font-bold text-red-600">
+                                                            {formatTime(recordingTime)}
+                                                        </div>
                                                     )}
-                                                </button>
-                                            ) : (
-                                                <div className="text-sm text-gray-500">
-                                                    Voice recording not supported in this browser
+                                                    
+                                                    {mediaRecorderSupported ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                if (recordingState === 'idle') {
+                                                                    startRecording();
+                                                                } else if (recordingState === 'recording') {
+                                                                    stopRecording();
+                                                                } else if (recordingState === 'stopped') {
+                                                                    resetRecording();
+                                                                }
+                                                            }}
+                                                            disabled={micPermissionDenied || (recordingState === 'recording' && recordingTime >= 60)}
+                                                            className={`contact-form__mic-button p-4 rounded-full transition-all flex items-center justify-center ${
+                                                                recordingState === 'recording'
+                                                                    ? 'bg-red-500 text-white shadow-lg'
+                                                                    : recordingState === 'stopped'
+                                                                    ? 'bg-gray-400 text-white'
+                                                                    : micPermissionDenied
+                                                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                                    : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                                                            }`}
+                                                            title={
+                                                                micPermissionDenied
+                                                                    ? 'Microphone access denied'
+                                                                    : recordingState === 'recording'
+                                                                    ? 'Stop recording'
+                                                                    : recordingState === 'stopped'
+                                                                    ? 'Re-record'
+                                                                    : 'Start recording'
+                                                            }
+                                                        >
+                                                            {micPermissionDenied ? (
+                                                                <MicOff size={24} />
+                                                            ) : (
+                                                                <Mic size={24} />
+                                                            )}
+                                                        </button>
+                                                    ) : (
+                                                        <div className="text-sm text-gray-500">
+                                                            Voice recording not supported in this browser
+                                                        </div>
+                                                    )}
+                                                    
+                                                    <div className="text-sm text-gray-600 text-center">
+                                                        {recordingState === 'idle' && 'Click to start recording'}
+                                                        {recordingState === 'recording' && 'Recording...'}
+                                                        {recordingState === 'stopped' && 'Recording complete'}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            {showWarning && recordingState === 'recording' && (
+                                                <div className="text-xs text-orange-600 font-semibold animate-pulse text-center">
+                                                    ⚠️ 10 seconds remaining
                                                 </div>
                                             )}
-                                            
-                                            <div className="text-sm text-gray-600 text-center">
-                                                {recordingState === 'idle' && 'Click to start recording'}
-                                                {recordingState === 'recording' && 'Recording...'}
-                                                {recordingState === 'stopped' && 'Recording complete'}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    {showWarning && recordingState === 'recording' && (
-                                        <div className="text-xs text-orange-600 font-semibold animate-pulse text-center">
-                                            ⚠️ 10 seconds remaining
-                                        </div>
+                                            {recordingState === 'stopped' && audioBlob && (
+                                                <div className="flex items-center justify-between text-xs text-green-600 font-semibold bg-green-50 p-3 rounded-[12px]">
+                                                    <span>✓ Audio recorded ({formatTime(recordingTime)})</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={resetRecording}
+                                                        className="text-red-600 hover:text-red-800 underline"
+                                                    >
+                                                        Delete & re-record
+                                                    </button>
+                                                </div>
+                                            )}
+                                            {micPermissionDenied && (
+                                                <div className="text-xs text-red-600 font-semibold text-center">
+                                                    Microphone access denied. Please allow microphone access to record audio.
+                                                </div>
+                                            )}
+                                        </motion.div>
                                     )}
-                                    {recordingState === 'stopped' && audioBlob && (
-                                        <div className="flex items-center justify-between text-xs text-green-600 font-semibold bg-green-50 p-3 rounded-[12px]">
-                                            <span>✓ Audio recorded ({formatTime(recordingTime)})</span>
-                                            <button
-                                                type="button"
-                                                onClick={resetRecording}
-                                                className="text-red-600 hover:text-red-800 underline"
-                                            >
-                                                Delete & re-record
-                                            </button>
-                                        </div>
-                                    )}
-                                    {micPermissionDenied && (
-                                        <div className="text-xs text-red-600 font-semibold text-center">
-                                            Microphone access denied. Please allow microphone access to record audio.
-                                        </div>
-                                    )}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
+                                </AnimatePresence>
+                            </div>
 
-                    <div className="contact-form__field space-y-1">
-                        <TagSelector selectedTags={selectedTags} onTagsChange={setSelectedTags} />
-                    </div>
+                            <div className="contact-form__field space-y-1">
+                                <TagSelector selectedTags={selectedTags} onTagsChange={setSelectedTags} />
+                            </div>
 
-                    <motion.button
-                        whileHover={{
-                            y: -4,
-                            scale: 1.02,
-                            boxShadow: "12px 12px 24px rgba(0, 0, 0, 0.25), -6px -6px 16px rgba(0, 0, 0, 0.15)"
-                        }}
-                        whileTap={{ scale: 0.98 }}
-                        type="submit"
-                        className="contact-form__submit contact-form-submit w-full font-black py-3 rounded-[12px] transition-all mt-2"
-                    >
-                        Send
-                    </motion.button>
-                </form>
+                            <div className="flex gap-3">
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    type="button"
+                                    onClick={handleStep2Back}
+                                    className="contact-form__back-button w-1/3 font-black py-3 rounded-[12px] transition-all border-2 border-black/30 bg-white text-black"
+                                >
+                                    Back
+                                </motion.button>
+                                <motion.button
+                                    whileHover={{
+                                        y: -4,
+                                        scale: 1.02,
+                                        boxShadow: "12px 12px 24px rgba(0, 0, 0, 0.25), -6px -6px 16px rgba(0, 0, 0, 0.15)"
+                                    }}
+                                    whileTap={{ scale: 0.98 }}
+                                    type="submit"
+                                    className="contact-form__submit contact-form-submit flex-1 font-black py-3 rounded-[12px] transition-all"
+                                >
+                                    Send
+                                </motion.button>
+                            </div>
+                        </motion.form>
+                    )}
+                </AnimatePresence>
             </div>
             
             <div className="flex flex-row flex-wrap justify-center gap-4 text-xs text-gray-600 mt-4">

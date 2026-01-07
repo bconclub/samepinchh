@@ -53,7 +53,7 @@ export default function VideoWall() {
             >
                 <h2 
                     className="text-[36px] md:text-[42px] font-bold text-black mb-4 tracking-wide"
-                    style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif" }}
+                    style={{ fontFamily: 'var(--font-classyvogue), sans-serif' }}
                 >
                     Our Stories
                 </h2>

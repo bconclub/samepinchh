@@ -113,6 +113,9 @@ $name = isset($_POST['name']) ? trim($_POST['name']) : '';
 $contact = isset($_POST['contact']) ? trim($_POST['contact']) : '';
 $date = isset($_POST['date']) ? trim($_POST['date']) : '';
 $story_text = isset($_POST['story']) ? trim($_POST['story']) : '';
+$tags = isset($_POST['tags']) ? $_POST['tags'] : '';
+$audio_duration = isset($_POST['audio_duration']) ? trim($_POST['audio_duration']) : null;
+$input_mode = isset($_POST['input_mode']) ? trim($_POST['input_mode']) : '';
 
 if (empty($name) || empty($contact)) {
     http_response_code(400);
@@ -338,6 +341,15 @@ mail($to, $subject, $message, $headers);
 // Send form data to webhook
 $webhook_url = 'https://build.goproxe.com/webhook/samepinchh-website';
 
+// Parse tags if provided
+$tags_array = [];
+if (!empty($tags)) {
+    $decoded_tags = json_decode($tags, true);
+    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_tags)) {
+        $tags_array = $decoded_tags;
+    }
+}
+
 // Collect all form data including UTM parameters
 // Always include both text and audio fields (even if empty) for consistent webhook structure
 $webhook_data = [
@@ -347,13 +359,20 @@ $webhook_data = [
     'timestamp' => $response_data['timestamp'],
     'has_audio' => $has_audio,
     'has_text' => $has_text,
+    'input_mode' => $input_mode ?: ($has_audio ? 'voice' : 'text'),
     // Always include text fields (empty string if no text)
     'story_text' => $has_text ? $story_text : '',
     'message' => $has_text ? $story_text : '',
     // Always include audio fields (null or empty if no audio)
     'audio_file' => $has_audio ? $response_data['audio_file'] : null,
     'audio_size' => $has_audio ? $response_data['audio_size'] : null,
-    'audio_mime_type' => $has_audio ? $response_data['audio_mime_type'] : null
+    'audio_mime_type' => $has_audio ? $response_data['audio_mime_type'] : null,
+    'audio_duration' => $audio_duration,
+    'audio_duration_seconds' => $audio_duration ? (int)$audio_duration : null,
+    // Tags
+    'tags' => $tags_array,
+    'tags_count' => count($tags_array),
+    'tags_json' => $tags
 ];
 
 // Add UTM parameters to webhook data (always include all, even if empty)

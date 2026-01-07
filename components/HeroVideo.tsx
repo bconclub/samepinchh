@@ -47,7 +47,7 @@ export default function HeroVideo() {
                 <div className="hero-video__header mb-6 text-center">
                     <h2 
                         className="hero-video__title text-[36px] md:text-[42px] font-bold mb-4 tracking-wide"
-                        style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: '#000000' }}
+                        style={{ fontFamily: 'var(--font-classyvogue), sans-serif', color: '#000000' }}
                     >
                         What is Samepinchh
                     </h2>
@@ -71,7 +71,6 @@ export default function HeroVideo() {
                             className="hero-video__iframe w-full h-full pointer-events-none"
                             frameBorder="0"
                             allow="autoplay; fullscreen; picture-in-picture"
-                            allowFullScreen
                             style={{ 
                                 position: 'absolute', 
                                 top: 0,

@@ -176,7 +176,7 @@ export default function InfoCarousel() {
                         }}
                         className="info-carousel__card frosted-glass p-6 md:p-[40px] rounded-[16px] border-l-[4px] w-full max-w-full"
                     >
-                        <h3 className="info-carousel__card-title text-[32px] font-black mb-4 tracking-wide" style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: '#000000' }}>
+                        <h3 className="info-carousel__card-title text-[32px] font-black mb-4 tracking-wide" style={{ color: '#000000' }}>
                             {card.title}:
                         </h3>
                         <p className="info-carousel__card-description text-[22px] leading-[1.7]" style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: 'var(--text-primary)' }}>
@@ -237,7 +237,7 @@ export default function InfoCarousel() {
                                 className="info-carousel__card frosted-glass p-6 rounded-[16px] border-l-[4px] w-full mx-auto relative"
                             >
                                 <div className="pb-20">
-                                    <h3 className="info-carousel__card-title text-[32px] font-black mb-4 tracking-wide" style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: '#000000' }}>
+                                    <h3 className="info-carousel__card-title text-[32px] font-black mb-4 tracking-wide" style={{ color: '#000000' }}>
                                         {cards[currentIndex].title}:
                                     </h3>
                                     <p className="info-carousel__card-description text-[22px] leading-[1.7] mb-4" style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif", color: 'var(--text-primary)' }}>

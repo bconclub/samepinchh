@@ -67,7 +67,7 @@ export default function NameModal({ isOpen, onSubmit, onClose }: NameModalProps)
                 </div>
                 <h2 
                   className="text-2xl md:text-3xl font-black"
-                  style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif" }}
+                  style={{ fontFamily: 'var(--font-classyvogue), sans-serif' }}
                 >
                   Enter Your Name
                 </h2>

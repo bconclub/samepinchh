@@ -34,6 +34,7 @@ export default function Header() {
                         height={50}
                         className="header__logo h-10 md:h-12 w-auto cursor-pointer"
                         priority
+                        loading="eager"
                     />
                 </Link>
                 <nav className="header__nav flex items-center">

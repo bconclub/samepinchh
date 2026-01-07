@@ -123,7 +123,6 @@ export default function VideoModal({ isOpen, onClose, vimeoVideoId }: VideoModal
                                     className="absolute top-0 left-0 w-full h-full"
                                     frameBorder="0"
                                     allow="autoplay; fullscreen; picture-in-picture"
-                                    allowFullScreen
                                     onLoad={() => {
                                         // Set volume to 50% when iframe loads
                                         if (iframeRef.current) {

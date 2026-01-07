@@ -74,6 +74,9 @@ export default function SpacesPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    let pingInterval: NodeJS.Timeout | null = null;
+    let currentUserId: string | null = null;
+
     const initializeUser = async () => {
       let userId = localStorage.getItem('samepinchh_user_id');
       let name = localStorage.getItem('samepinchh_user_name') || '';
@@ -84,6 +87,8 @@ export default function SpacesPage() {
         setIsInitializing(false);
         return;
       } else {
+        currentUserId = userId;
+        
         // Update existing user to online
         try {
           const { error } = await supabase
@@ -98,7 +103,6 @@ export default function SpacesPage() {
         } catch (err) {
           console.error('Error updating user status:', err);
         }
-      }
 
         setCurrentUserId(userId);
         setUserName(name);
@@ -106,7 +110,7 @@ export default function SpacesPage() {
         setIsInitializing(false);
 
         // Update last_ping every 30 seconds to keep status fresh
-        const pingInterval = setInterval(async () => {
+        pingInterval = setInterval(async () => {
           await supabase
             .from('users')
             .update({
@@ -115,19 +119,23 @@ export default function SpacesPage() {
             })
             .eq('id', userId);
         }, 30000);
-
-        // Cleanup on unmount - set status to offline
-        return () => {
-          clearInterval(pingInterval);
-          supabase
-            .from('users')
-            .update({ status: 'offline' })
-            .eq('id', userId);
-        };
       }
     };
 
     initializeUser();
+
+    // Cleanup on unmount - set status to offline
+    return () => {
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
+      if (currentUserId) {
+        supabase
+          .from('users')
+          .update({ status: 'offline' })
+          .eq('id', currentUserId);
+      }
+    };
   }, []);
 
   // Get online count
@@ -204,7 +212,7 @@ export default function SpacesPage() {
                 <Radio size={32} className="text-green-500" />
                 <h1 
                   className="text-4xl md:text-5xl font-black tracking-wide"
-                  style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif" }}
+                  style={{ fontFamily: 'var(--font-classyvogue), sans-serif' }}
                 >
                   Radar
                 </h1>
@@ -246,66 +254,6 @@ export default function SpacesPage() {
           <Footer />
         </>
       ) : null}
-    </main>
-  );
-
-  return (
-    <main className="min-h-screen relative overflow-hidden">
-      <ColorBlobs />
-      <Header />
-      
-      <section className="relative px-6 py-12 md:py-20 max-w-7xl mx-auto z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-8"
-        >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Radio size={32} className="text-green-500" />
-            <h1 
-              className="text-4xl md:text-5xl font-black tracking-wide"
-              style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif" }}
-            >
-              Radar
-            </h1>
-          </div>
-          <p className="text-lg text-gray-600 mb-4">
-            Find people online and ready to connect
-          </p>
-
-          {/* Status bar */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Wifi size={16} />
-              <span>{onlineCount} {onlineCount === 1 ? 'person' : 'people'} online</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={toggleOnline}
-                className={`px-4 py-2 rounded-[12px] font-semibold transition-all ${
-                  isOnline
-                    ? 'bg-green-500 text-white hover:bg-green-600'
-                    : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
-                }`}
-              >
-                {isOnline ? '✓ Online' : 'Go Online'}
-              </button>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Radar Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          <RadarGrid currentUserId={currentUserId} />
-        </motion.div>
-      </section>
-
-      <Footer />
     </main>
   );
 }

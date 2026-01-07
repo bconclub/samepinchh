@@ -84,6 +84,7 @@ export default function FloatingVideo() {
         <div 
             ref={containerRef}
             className="floating-video-container relative w-full z-20"
+            style={{ position: 'relative' }}
         >
             <motion.div
                 ref={wrapperRef}
@@ -112,7 +113,6 @@ export default function FloatingVideo() {
                         className="floating-video__iframe floating-video-iframe w-full h-full pointer-events-none"
                         frameBorder="0"
                         allow="autoplay; fullscreen; picture-in-picture"
-                        allowFullScreen
                         onLoad={() => {
                             setIsPlaying(false);
                             if (iframeRef.current) {

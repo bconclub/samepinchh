@@ -148,7 +148,7 @@ export default function ConnectionsPage() {
             <Users size={32} />
             <h1 
               className="text-4xl md:text-5xl font-black tracking-wide"
-              style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif" }}
+              style={{ fontFamily: 'var(--font-classyvogue), sans-serif' }}
             >
               Connections
             </h1>

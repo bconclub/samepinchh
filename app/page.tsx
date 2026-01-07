@@ -11,7 +11,7 @@ import WhatsAppFloat from '@/components/WhatsAppFloat';
 
 export default function Home() {
   return (
-    <main className="min-h-screen relative overflow-hidden">
+    <main className="min-h-screen relative overflow-hidden" style={{ position: 'relative' }}>
       <ColorBlobs />
       <Header />
       <Hero />

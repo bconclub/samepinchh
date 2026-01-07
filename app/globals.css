@@ -117,7 +117,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-classyvogue), sans-serif;
   font-weight: 700;
 }
 
@@ -225,7 +225,7 @@ section.brand-section {
 }
 
 .hero-title {
-  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-classyvogue), sans-serif;
   color: #ffffff;
   font-weight: 700;
   line-height: 1.2;
@@ -285,7 +285,7 @@ section.brand-section {
 }
 
 .brand-title {
-  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-classyvogue), sans-serif;
   color: #000000;
   font-weight: 700;
   line-height: 1.2;
@@ -302,7 +302,7 @@ section.brand-section {
 }
 
 .tagline {
-  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-classyvogue), sans-serif;
   color: #000000;
   font-weight: 300;
   line-height: 1.4;
@@ -356,7 +356,7 @@ section.brand-section {
 }
 
 .info-carousel-card-title {
-  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-classyvogue), sans-serif;
   color: #000000;
   font-weight: 900;
   font-size: 32px;
@@ -637,7 +637,7 @@ section.brand-section {
 }
 
 .contact-form-title {
-  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-classyvogue), sans-serif;
   color: #000000;
   font-weight: 900;
   font-size: 32px;
