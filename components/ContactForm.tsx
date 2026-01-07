@@ -726,9 +726,6 @@ export default function ContactForm() {
                     </div>
                 </div>
             </div>
-            <div className="text-center text-sm text-gray-600 mb-6">
-                7/10 Seats Filled
-            </div>
             <div
                 className="contact-form__container contact-form-container frosted-glass rounded-[16px]"
             >
