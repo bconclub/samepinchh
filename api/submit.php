@@ -141,10 +141,12 @@ $response_data = [
     'timestamp' => date('Y-m-d H:i:s')
 ];
 
-// Collect UTM parameters and add to response (always include all, even if empty)
+// Collect all tracking parameters (UTM + Ad Click IDs) and add to response (always include all, even if empty)
 $utm_keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+$ad_click_ids = ['gclid', 'fbclid', 'msclkid', 'ttclid', 'li_fat_id'];
+$all_tracking_keys = array_merge($utm_keys, $ad_click_ids);
 $utm_params = [];
-foreach ($utm_keys as $key) {
+foreach ($all_tracking_keys as $key) {
     $value = isset($_POST[$key]) ? trim($_POST[$key]) : '';
     $utm_params[$key] = $value;
     $response_data[$key] = $value; // Always add to response, even if empty
@@ -301,8 +303,16 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     $stmt = $pdo->prepare("
-        INSERT INTO submissions (name, contact, date, story_text, audio_file, timestamp)
-        VALUES (:name, :contact, :date, :story_text, :audio_file, NOW())
+        INSERT INTO submissions (
+            name, contact, date, story_text, audio_file, timestamp,
+            utm_source, utm_medium, utm_campaign, utm_term, utm_content,
+            gclid, fbclid, msclkid, ttclid, li_fat_id
+        )
+        VALUES (
+            :name, :contact, :date, :story_text, :audio_file, NOW(),
+            :utm_source, :utm_medium, :utm_campaign, :utm_term, :utm_content,
+            :gclid, :fbclid, :msclkid, :ttclid, :li_fat_id
+        )
     ");
     
     $stmt->execute([
@@ -310,7 +320,17 @@ try {
         ':contact' => $contact,
         ':date' => $date,
         ':story_text' => $has_text ? $story_text : null,
-        ':audio_file' => $has_audio ? $response_data['audio_file'] : null
+        ':audio_file' => $has_audio ? $response_data['audio_file'] : null,
+        ':utm_source' => $utm_params['utm_source'] ?? '',
+        ':utm_medium' => $utm_params['utm_medium'] ?? '',
+        ':utm_campaign' => $utm_params['utm_campaign'] ?? '',
+        ':utm_term' => $utm_params['utm_term'] ?? '',
+        ':utm_content' => $utm_params['utm_content'] ?? '',
+        ':gclid' => $utm_params['gclid'] ?? '',
+        ':fbclid' => $utm_params['fbclid'] ?? '',
+        ':msclkid' => $utm_params['msclkid'] ?? '',
+        ':ttclid' => $utm_params['ttclid'] ?? '',
+        ':li_fat_id' => $utm_params['li_fat_id'] ?? ''
     ]);
     
     $response_data['submission_id'] = $pdo->lastInsertId();
@@ -375,8 +395,8 @@ $webhook_data = [
     'tags_json' => $tags
 ];
 
-// Add UTM parameters to webhook data (always include all, even if empty)
-foreach ($utm_keys as $key) {
+// Add all tracking parameters (UTM + Ad Click IDs) to webhook data (always include all, even if empty)
+foreach ($all_tracking_keys as $key) {
     $webhook_data[$key] = isset($utm_params[$key]) ? $utm_params[$key] : '';
 }
 

@@ -479,21 +479,27 @@ export default function ContactForm() {
     };
 
     const getUTMParameters = () => {
+        // Standard UTM parameters
         const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+        // Ad platform click IDs
+        const adClickIds = ['gclid', 'fbclid', 'msclkid', 'ttclid', 'li_fat_id'];
+        // Combine all tracking parameters
+        const allTrackingKeys = [...utmKeys, ...adClickIds];
         const utmParams: any = {};
         
         if (typeof window !== 'undefined') {
             const urlParams = new URLSearchParams(window.location.search);
-        utmKeys.forEach(key => {
-            const value = urlParams.get(key);
-                // Always include all UTM parameters, use empty string if not present
+            // Capture all tracking parameters from URL
+            allTrackingKeys.forEach(key => {
+                const value = urlParams.get(key);
+                // Always include all parameters, use empty string if not present
                 utmParams[key] = value || '';
             });
         } else {
-            // SSR: return empty strings for all UTM parameters
-            utmKeys.forEach(key => {
+            // SSR: return empty strings for all tracking parameters
+            allTrackingKeys.forEach(key => {
                 utmParams[key] = '';
-        });
+            });
         }
         
         return utmParams;
@@ -678,10 +684,13 @@ export default function ContactForm() {
                 console.error('Webhook error:', result.webhook_error);
             }
             
-            // Log UTM parameters
-            console.log('=== UTM PARAMETERS ===');
-            const utmParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
-            utmParams.forEach(key => {
+            // Log all tracking parameters (UTM + Ad Click IDs)
+            console.log('=== TRACKING PARAMETERS ===');
+            const trackingParams = [
+                'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+                'gclid', 'fbclid', 'msclkid', 'ttclid', 'li_fat_id'
+            ];
+            trackingParams.forEach(key => {
                 if (result[key]) {
                     console.log(`${key}:`, result[key]);
                 }

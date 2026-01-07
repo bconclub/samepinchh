@@ -160,11 +160,18 @@ CREATE TABLE submissions (
     story_text TEXT,
     audio_file VARCHAR(255),
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    -- UTM Parameters
     utm_source VARCHAR(255),
     utm_medium VARCHAR(255),
     utm_campaign VARCHAR(255),
     utm_term VARCHAR(255),
-    utm_content VARCHAR(255)
+    utm_content VARCHAR(255),
+    -- Ad Platform Click IDs
+    gclid VARCHAR(255),
+    fbclid VARCHAR(255),
+    msclkid VARCHAR(255),
+    ttclid VARCHAR(255),
+    li_fat_id VARCHAR(255)
 );
 ```
 
