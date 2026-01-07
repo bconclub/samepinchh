@@ -2,14 +2,14 @@
 
 import { motion } from 'framer-motion';
 
-export type Tag = 'Brain Injury' | 'Stroke' | 'Cancer' | 'Trauma' | 'Caregiver' | 'Other' | 'Chronic Illness' | 'Accident Survivor' | 'Rare Disease';
+export type Tag = 'Brain Injury' | 'Stroke' | 'Cancer' | 'Trauma' | 'Other' | 'Chronic Illness' | 'Accident Survivor' | 'Rare Disease';
 
 interface TagSelectorProps {
   selectedTags: Tag[];
   onTagsChange: (tags: Tag[]) => void;
 }
 
-const availableTags: Tag[] = ['Brain Injury', 'Stroke', 'Cancer', 'Trauma', 'Caregiver', 'Other', 'Chronic Illness', 'Accident Survivor', 'Rare Disease'];
+const availableTags: Tag[] = ['Brain Injury', 'Stroke', 'Cancer', 'Trauma', 'Other', 'Chronic Illness', 'Accident Survivor', 'Rare Disease'];
 
 export default function TagSelector({ selectedTags, onTagsChange }: TagSelectorProps) {
   const toggleTag = (tag: Tag) => {
