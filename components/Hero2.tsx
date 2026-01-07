@@ -85,7 +85,7 @@ export default function Hero2() {
                         viewport={{ once: false, margin: "-100px" }}
                         transition={{ duration: 0.5, delay: 0.8, ease: "easeOut" }}
                     >
-                        (Anonymously)
+                        Anonymously
                     </motion.p>
                 </div>
             </motion.div>

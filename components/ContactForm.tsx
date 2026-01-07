@@ -1,10 +1,13 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mic, MicOff, Lock, Heart, Shield } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import TagSelector, { type Tag } from './TagSelector';
+import InputToggle from './InputToggle';
+import VoiceBlob from './VoiceBlob';
 
 // @ts-ignore - react-datepicker types conflict with Next.js dynamic import  
 const DatePicker: any = dynamic(
@@ -130,6 +133,19 @@ export default function ContactForm() {
         selectedDate: null as Date | null,
         message: ''
     });
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+    const [inputMode, setInputMode] = useState<'text' | 'voice'>('text');
+    const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
+    
+    const handleModeChange = (mode: 'text' | 'voice') => {
+        setInputMode(mode);
+        // Clear the other mode's data when switching
+        if (mode === 'text' && audioBlob) {
+            resetRecording();
+        } else if (mode === 'voice' && formData.message.trim()) {
+            setFormData({ ...formData, message: '' });
+        }
+    };
     const [isMounted, setIsMounted] = useState(false);
     const [recordingState, setRecordingState] = useState<RecordingState>('idle');
     const [recordingTime, setRecordingTime] = useState(0);
@@ -296,6 +312,10 @@ export default function ContactForm() {
             if (formData.message.trim()) {
                 setFormData({ ...formData, message: '' });
             }
+            // Switch to voice mode if not already
+            if (inputMode !== 'voice') {
+                setInputMode('voice');
+            }
 
             // Request microphone access
             const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -306,6 +326,7 @@ export default function ContactForm() {
                 } 
             });
             streamRef.current = stream;
+            setAudioStream(stream);
 
             // Determine supported MIME type
             let mimeType = 'audio/webm';
@@ -337,6 +358,7 @@ export default function ContactForm() {
                     streamRef.current.getTracks().forEach(track => track.stop());
                     streamRef.current = null;
                 }
+                setAudioStream(null);
             };
 
             mediaRecorder.start(100); // Collect data every 100ms
@@ -398,6 +420,7 @@ export default function ContactForm() {
             streamRef.current.getTracks().forEach(track => track.stop());
             streamRef.current = null;
         }
+        setAudioStream(null);
     };
 
     const formatTime = (seconds: number): string => {
@@ -430,9 +453,13 @@ export default function ContactForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        // Validate that either text or audio is provided
-        if (!audioBlob && !formData.message.trim()) {
-            alert('Please either type a message or record audio');
+        // Validate that either text or audio is provided based on current mode
+        if (inputMode === 'voice' && !audioBlob) {
+            alert('Please record audio or switch to text mode');
+            return;
+        }
+        if (inputMode === 'text' && !formData.message.trim()) {
+            alert('Please type a message or switch to voice mode');
             return;
         }
         
@@ -480,6 +507,11 @@ export default function ContactForm() {
             formDataToSend.append('audio', audioFile);
         } else {
             formDataToSend.append('story', formData.message);
+        }
+        
+        // Add tags
+        if (selectedTags.length > 0) {
+            formDataToSend.append('tags', JSON.stringify(selectedTags));
         }
         
         // Send to PHP upload endpoint
@@ -608,7 +640,7 @@ export default function ContactForm() {
                             {countdown.days} {countdown.days === 1 ? 'day' : 'days'} {countdown.hours} {countdown.hours === 1 ? 'hour' : 'hours'}
                         </p>
                         <p className="font-bold text-white text-[21px]">
-                            {formatDate(nextSpaceDate)}
+                            17 Saturday
                         </p>
                     </div>
                     {/* Desktop: Two lines */}
@@ -617,7 +649,7 @@ export default function ContactForm() {
                             Next Space in {countdown.days} {countdown.days === 1 ? 'day' : 'days'} and {countdown.hours} {countdown.hours === 1 ? 'hour' : 'hours'}
                         </p>
                         <p className="font-bold text-white text-[23px]">
-                            {formatDate(nextSpaceDate)}
+                            17 Saturday
                         </p>
                     </div>
                 </div>
@@ -686,7 +718,7 @@ export default function ContactForm() {
                                         maxDate.setDate(maxDate.getDate() + (8 * 7)); // 8 weeks from today
                                         return maxDate;
                                     })()}
-                                    dateFormat="EEEE, MMM d, h:mm aa"
+                                    dateFormat="EEEE, MMM do, h:mm aa"
                                     placeholderText="Select a Saturday"
                                     className="contact-form__input contact-form-input w-full px-3 py-2 rounded-[12px] frosted-glass border-2 border-black/30 focus:outline-none focus:ring-2 focus:ring-black/20 transition-all placeholder:text-gray-500"
                                     calendarClassName="saturday-date-picker"
@@ -721,92 +753,144 @@ export default function ContactForm() {
                     </div>
 
                     <div className="contact-form__field space-y-1">
-                        <label className="contact-form__label contact-form-label">What brought you here</label>
-                        <div className="relative">
-                            <textarea
-                                rows={3}
-                                required={!audioBlob}
-                                value={formData.message}
-                                onChange={(e) => {
-                                    setFormData({ ...formData, message: e.target.value });
-                                    // If user types, clear audio recording
-                                    if (e.target.value.trim() && audioBlob) {
-                                        resetRecording();
-                                    }
-                                }}
-                                className="contact-form__textarea contact-form-textarea w-full px-3 py-2 pr-12 rounded-[12px] frosted-glass border-2 border-black/30 focus:outline-none focus:ring-2 focus:ring-black/20 transition-all placeholder:text-gray-500 resize-none"
-                                placeholder={audioBlob ? "" : ""}
-                                disabled={recordingState === 'recording'}
-                            />
-                            {mediaRecorderSupported && (
-                                <div className="absolute right-2 top-2 flex flex-col items-end gap-1">
-                                    {recordingState === 'recording' && (
-                                        <div className="text-xs font-bold text-red-600">
-                                            {formatTime(recordingTime)}
-                                        </div>
-                                    )}
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            if (recordingState === 'idle') {
-                                                startRecording();
-                                            } else if (recordingState === 'recording') {
-                                                stopRecording();
-                                            } else if (recordingState === 'stopped') {
+                        <InputToggle mode={inputMode} onModeChange={handleModeChange} />
+                        
+                        <AnimatePresence mode="wait">
+                            {inputMode === 'text' ? (
+                                <motion.div
+                                    key="text-input"
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 10 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="relative"
+                                >
+                                    <textarea
+                                        rows={4}
+                                        required={!audioBlob}
+                                        value={formData.message}
+                                        maxLength={500}
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, message: e.target.value });
+                                            // If user types, clear audio recording
+                                            if (e.target.value.trim() && audioBlob) {
                                                 resetRecording();
                                             }
                                         }}
-                                        disabled={micPermissionDenied || (recordingState === 'recording' && recordingTime >= 60)}
-                                        className={`contact-form__mic-button p-2 rounded-full transition-all ${
-                                            recordingState === 'recording'
-                                                ? 'bg-red-500 text-white animate-pulse'
-                                                : recordingState === 'stopped'
-                                                ? 'bg-gray-400 text-white'
-                                                : micPermissionDenied
-                                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
-                                        }`}
-                                        title={
-                                            micPermissionDenied
-                                                ? 'Microphone access denied'
-                                                : recordingState === 'recording'
-                                                ? 'Stop recording'
-                                                : recordingState === 'stopped'
-                                                ? 'Re-record'
-                                                : 'Start recording'
-                                        }
-                                    >
-                                        {micPermissionDenied ? (
-                                            <MicOff size={20} />
-                                        ) : (
-                                            <Mic size={20} />
-                                        )}
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                        {showWarning && recordingState === 'recording' && (
-                            <div className="text-xs text-orange-600 font-semibold animate-pulse">
-                                ⚠️ 10 seconds remaining
-                            </div>
-                        )}
-                        {recordingState === 'stopped' && audioBlob && (
-                            <div className="flex items-center justify-between text-xs text-green-600 font-semibold">
-                                <span>✓ Audio recorded ({formatTime(recordingTime)})</span>
-                                <button
-                                    type="button"
-                                    onClick={resetRecording}
-                                    className="text-red-600 hover:text-red-800 underline"
+                                        className="contact-form__textarea contact-form-textarea w-full px-3 py-2 rounded-[12px] frosted-glass border-2 border-black/30 focus:outline-none focus:ring-2 focus:ring-black/20 transition-all placeholder:text-gray-500 resize-none"
+                                        placeholder="Share your story..."
+                                    />
+                                    <div className="text-right text-xs text-gray-500 mt-1">
+                                        {formData.message.length}/500
+                                    </div>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="voice-input"
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 10 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="space-y-4"
                                 >
-                                    Delete & re-record
-                                </button>
-                            </div>
-                        )}
-                        {micPermissionDenied && (
-                            <div className="text-xs text-red-600 font-semibold">
-                                Microphone access denied. Please allow microphone access to record audio.
-                            </div>
-                        )}
+                                    <div className="flex flex-col items-center justify-center py-8 rounded-[12px] frosted-glass border-2 border-black/30">
+                                        {recordingState === 'recording' && (
+                                            <div className="mb-4">
+                                                <VoiceBlob 
+                                                    isRecording={recordingState === 'recording'} 
+                                                    audioStream={audioStream}
+                                                />
+                                            </div>
+                                        )}
+                                        
+                                        <div className="flex flex-col items-center gap-3">
+                                            {recordingState === 'recording' && (
+                                                <div className="text-lg font-bold text-red-600">
+                                                    {formatTime(recordingTime)}
+                                                </div>
+                                            )}
+                                            
+                                            {mediaRecorderSupported ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        if (recordingState === 'idle') {
+                                                            startRecording();
+                                                        } else if (recordingState === 'recording') {
+                                                            stopRecording();
+                                                        } else if (recordingState === 'stopped') {
+                                                            resetRecording();
+                                                        }
+                                                    }}
+                                                    disabled={micPermissionDenied || (recordingState === 'recording' && recordingTime >= 60)}
+                                                    className={`contact-form__mic-button p-4 rounded-full transition-all flex items-center justify-center ${
+                                                        recordingState === 'recording'
+                                                            ? 'bg-red-500 text-white shadow-lg'
+                                                            : recordingState === 'stopped'
+                                                            ? 'bg-gray-400 text-white'
+                                                            : micPermissionDenied
+                                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                            : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                                                    }`}
+                                                    title={
+                                                        micPermissionDenied
+                                                            ? 'Microphone access denied'
+                                                            : recordingState === 'recording'
+                                                            ? 'Stop recording'
+                                                            : recordingState === 'stopped'
+                                                            ? 'Re-record'
+                                                            : 'Start recording'
+                                                    }
+                                                >
+                                                    {micPermissionDenied ? (
+                                                        <MicOff size={24} />
+                                                    ) : (
+                                                        <Mic size={24} />
+                                                    )}
+                                                </button>
+                                            ) : (
+                                                <div className="text-sm text-gray-500">
+                                                    Voice recording not supported in this browser
+                                                </div>
+                                            )}
+                                            
+                                            <div className="text-sm text-gray-600 text-center">
+                                                {recordingState === 'idle' && 'Click to start recording'}
+                                                {recordingState === 'recording' && 'Recording...'}
+                                                {recordingState === 'stopped' && 'Recording complete'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {showWarning && recordingState === 'recording' && (
+                                        <div className="text-xs text-orange-600 font-semibold animate-pulse text-center">
+                                            ⚠️ 10 seconds remaining
+                                        </div>
+                                    )}
+                                    {recordingState === 'stopped' && audioBlob && (
+                                        <div className="flex items-center justify-between text-xs text-green-600 font-semibold bg-green-50 p-3 rounded-[12px]">
+                                            <span>✓ Audio recorded ({formatTime(recordingTime)})</span>
+                                            <button
+                                                type="button"
+                                                onClick={resetRecording}
+                                                className="text-red-600 hover:text-red-800 underline"
+                                            >
+                                                Delete & re-record
+                                            </button>
+                                        </div>
+                                    )}
+                                    {micPermissionDenied && (
+                                        <div className="text-xs text-red-600 font-semibold text-center">
+                                            Microphone access denied. Please allow microphone access to record audio.
+                                        </div>
+                                    )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+
+                    <div className="contact-form__field space-y-1">
+                        <TagSelector selectedTags={selectedTags} onTagsChange={setSelectedTags} />
                     </div>
 
                     <motion.button

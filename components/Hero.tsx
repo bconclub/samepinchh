@@ -86,8 +86,6 @@ export default function Hero() {
                     {"Survived something that changed everything".split(' ').map((word, index) => {
                         // Capitalize first letter of each word
                         const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
-                        // Check if word is "something" or "everything" (case-insensitive)
-                        const isBold = word.toLowerCase() === 'something' || word.toLowerCase() === 'everything';
                         
                         return (
                             <motion.span
@@ -99,9 +97,9 @@ export default function Hero() {
                                     delay: index * 0.1, 
                                     ease: "easeOut" 
                                 }}
-                                className={`inline-block ${isBold ? 'font-black' : 'font-light'}`}
+                                className="inline-block font-semibold"
                                 style={{
-                                    fontWeight: isBold ? 900 : 300
+                                    fontWeight: 600
                                 }}
                             >
                                 {capitalizedWord}

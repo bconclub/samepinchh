@@ -133,7 +133,7 @@ h6 {
   
   /* Hero title - 20% bigger on mobile */
   .hero__title {
-    font-size: 50px !important;
+    font-size: 45px !important;
   }
   
   h2, h3 {
@@ -226,7 +226,7 @@ section.brand-section {
 
 .hero-title {
   font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
-  color: #D9D9D9;
+  color: #ffffff;
   font-weight: 700;
   line-height: 1.2;
   font-size: 28px;

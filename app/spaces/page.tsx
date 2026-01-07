@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ColorBlobs from '@/components/ColorBlobs';
 import RadarGrid from '@/components/RadarGrid';
+import NameModal from '@/components/NameModal';
 import { supabase } from '@/lib/supabase';
 import { Radio, Users, Wifi } from 'lucide-react';
 
@@ -14,6 +15,60 @@ export default function SpacesPage() {
   const [userName, setUserName] = useState<string>('');
   const [isOnline, setIsOnline] = useState(false);
   const [onlineCount, setOnlineCount] = useState(0);
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  // Handle name submission from modal
+  const handleNameSubmit = async (inputName: string) => {
+    try {
+      setIsInitializing(true);
+      const { data, error } = await supabase
+        .from('users')
+        .insert({
+          name: inputName,
+          status: 'online',
+          last_ping: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      const userId = data.id;
+      localStorage.setItem('samepinchh_user_id', userId);
+      localStorage.setItem('samepinchh_user_name', inputName);
+      
+      setCurrentUserId(userId);
+      setUserName(inputName);
+      setIsOnline(true);
+      setShowNameModal(false);
+      setIsInitializing(false);
+      
+      // Start ping interval
+      const pingInterval = setInterval(async () => {
+        await supabase
+          .from('users')
+          .update({
+            last_ping: new Date().toISOString(),
+            status: 'online',
+          })
+          .eq('id', userId);
+      }, 30000);
+      
+      // Store interval for cleanup
+      return () => {
+        clearInterval(pingInterval);
+        supabase
+          .from('users')
+          .update({ status: 'offline' })
+          .eq('id', userId);
+      };
+    } catch (err) {
+      console.error('Error creating user:', err);
+      alert('Failed to create user. Please try again.');
+      setIsInitializing(false);
+    }
+  };
 
   // Get or create user ID and set online status
   useEffect(() => {
@@ -24,31 +79,10 @@ export default function SpacesPage() {
       let name = localStorage.getItem('samepinchh_user_name') || '';
 
       if (!userId) {
-        // Create new user in database
-        const inputName = prompt('Enter your name (this will be visible to others):') || 'Anonymous';
-        name = inputName;
-        
-        try {
-          const { data, error } = await supabase
-            .from('users')
-            .insert({
-              name: inputName,
-              status: 'online',
-              last_ping: new Date().toISOString(),
-            })
-            .select()
-            .single();
-
-          if (error) throw error;
-          
-          userId = data.id;
-          localStorage.setItem('samepinchh_user_id', userId);
-          localStorage.setItem('samepinchh_user_name', inputName);
-        } catch (err) {
-          console.error('Error creating user:', err);
-          alert('Failed to create user. Please refresh and try again.');
-          return;
-        }
+        // Show name modal instead of browser prompt
+        setShowNameModal(true);
+        setIsInitializing(false);
+        return;
       } else {
         // Update existing user to online
         try {
@@ -66,29 +100,31 @@ export default function SpacesPage() {
         }
       }
 
-      setCurrentUserId(userId);
-      setUserName(name);
-      setIsOnline(true);
+        setCurrentUserId(userId);
+        setUserName(name);
+        setIsOnline(true);
+        setIsInitializing(false);
 
-      // Update last_ping every 30 seconds to keep status fresh
-      const pingInterval = setInterval(async () => {
-        await supabase
-          .from('users')
-          .update({
-            last_ping: new Date().toISOString(),
-            status: 'online',
-          })
-          .eq('id', userId);
-      }, 30000);
+        // Update last_ping every 30 seconds to keep status fresh
+        const pingInterval = setInterval(async () => {
+          await supabase
+            .from('users')
+            .update({
+              last_ping: new Date().toISOString(),
+              status: 'online',
+            })
+            .eq('id', userId);
+        }, 30000);
 
-      // Cleanup on unmount - set status to offline
-      return () => {
-        clearInterval(pingInterval);
-        supabase
-          .from('users')
-          .update({ status: 'offline' })
-          .eq('id', userId);
-      };
+        // Cleanup on unmount - set status to offline
+        return () => {
+          clearInterval(pingInterval);
+          supabase
+            .from('users')
+            .update({ status: 'offline' })
+            .eq('id', userId);
+        };
+      }
     };
 
     initializeUser();
@@ -137,21 +173,81 @@ export default function SpacesPage() {
     }
   };
 
-  if (!currentUserId) {
-    return (
-      <main className="min-h-screen relative overflow-hidden">
-        <ColorBlobs />
-        <Header />
+  return (
+    <main className="min-h-screen relative overflow-hidden">
+      <ColorBlobs />
+      <Header />
+      
+      {/* Name Modal */}
+      <NameModal
+        isOpen={showNameModal}
+        onSubmit={handleNameSubmit}
+      />
+      
+      {isInitializing && !currentUserId ? (
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
             <p className="text-gray-600">Loading...</p>
           </div>
         </div>
-        <Footer />
-      </main>
-    );
-  }
+      ) : currentUserId ? (
+        <>
+          <section className="relative px-6 py-12 md:py-20 max-w-7xl mx-auto z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-8"
+            >
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <Radio size={32} className="text-green-500" />
+                <h1 
+                  className="text-4xl md:text-5xl font-black tracking-wide"
+                  style={{ fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif" }}
+                >
+                  Radar
+                </h1>
+              </div>
+              <p className="text-lg text-gray-600 mb-4">
+                Find people online and ready to connect
+              </p>
+
+              {/* Status bar */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Wifi size={16} />
+                  <span>{onlineCount} {onlineCount === 1 ? 'person' : 'people'} online</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={toggleOnline}
+                    className={`px-4 py-2 rounded-[12px] font-semibold transition-all ${
+                      isOnline
+                        ? 'bg-green-500 text-white hover:bg-green-600'
+                        : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                    }`}
+                  >
+                    {isOnline ? '✓ Online' : 'Go Online'}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Radar Grid */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <RadarGrid currentUserId={currentUserId} />
+            </motion.div>
+          </section>
+          <Footer />
+        </>
+      ) : null}
+    </main>
+  );
 
   return (
     <main className="min-h-screen relative overflow-hidden">
