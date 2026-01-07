@@ -607,17 +607,23 @@ export default function ContactForm() {
             const responseText = await response.text();
             console.log('Response text:', responseText);
             
+            // Check if response is HTML (error page) before trying to parse JSON
+            if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
+                console.error('Server returned HTML instead of JSON');
+                if (response.status === 500) {
+                    throw new Error('Server error (500). The PHP file may have an error or the server is misconfigured. Please contact support.');
+                } else if (response.status === 404) {
+                    throw new Error('Endpoint not found (404). Please make sure /api/submit.php exists on the server.');
+                } else {
+                    throw new Error('Server returned an HTML error page. Please contact support.');
+                }
+            }
+            
             let result;
             try {
                 result = JSON.parse(responseText);
             } catch (parseError) {
                 console.error('Failed to parse JSON response:', parseError);
-                
-                // Check if response is HTML
-                if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
-                    throw new Error('Server returned an HTML error page instead of JSON. The PHP server may have an error. Please contact support.');
-                }
-                
                 throw new Error(`Server returned invalid response format. Expected JSON but received: ${responseText.substring(0, 100)}...`);
             }
             
