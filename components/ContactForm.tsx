@@ -582,14 +582,15 @@ export default function ContactForm() {
     
     const sendToUploadEndpoint = async (formData: FormData, payload: any) => {
         try {
-            // Get upload endpoint URL from environment variable or use Next.js API route
-            // For development: Next.js API route at /api/submit will proxy to PHP
-            // For production: Set NEXT_PUBLIC_UPLOAD_URL to your PHP server URL
-            // (e.g., https://yourdomain.com/api/submit.php)
+            // Get upload endpoint URL from environment variable or use PHP endpoint directly
+            // Since we're using static export, API routes don't work, so we call PHP directly
+            // For development: Set NEXT_PUBLIC_UPLOAD_URL=http://localhost:8000/api/submit.php
+            // For production: Set NEXT_PUBLIC_UPLOAD_URL=https://samepinchh.com/api/submit.php
+            // Or it will default to relative path /api/submit.php
             const uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL || 
                 (typeof window !== 'undefined' 
-                    ? `${window.location.origin}/api/submit`
-                    : '/api/submit');
+                    ? `${window.location.origin}/api/submit.php`
+                    : '/api/submit.php');
             
             console.log('Uploading to:', uploadUrl);
             console.log('Form data keys:', Array.from(formData.keys()));
